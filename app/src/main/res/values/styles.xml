@@ -1,0 +1,6 @@
+<resources>
+    <style name="BottomNavigationTheme" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/greyColor</item>
+        <item name="itemTextColor">@color/blackColor</item>
+    </style>
+</resources>
