@@ -6,12 +6,12 @@ import kotlinx.coroutines.flow.Flow
 
 class RecipeRepository(private val recipeDao: RecipeDao) {
     fun getRecipesOrderedByRecipeName(): Flow<List<Recipe>> = recipeDao.getRecipesOrderedByRecipeName()
-
     fun getRecipesOrderedByIngredients(): Flow<List<Recipe>> = recipeDao.getRecipesOrderedByIngredients()
 
     fun getRecipesOrderedByInstructions(): Flow<List<Recipe>> = recipeDao.getRecipesOrderedByInstructions()
 
     suspend fun upsertRecipe(recipe: Recipe) {
+        println("upsertRecipe: $recipe")
         recipeDao.upsertRecipe(recipe)
     }
 

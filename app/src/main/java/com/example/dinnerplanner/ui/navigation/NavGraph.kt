@@ -12,11 +12,11 @@ import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
 
 @Composable
 fun NavGraph(navController: NavHostController, isLoggedIn: MutableState<Boolean>, viewModel: DinnerPlannerViewModel) {
-    NavHost(navController, startDestination = BottomNavItem.Home.route) {
+    NavHost(navController, startDestination = BottomNavItem.Login.route) {
         composable(BottomNavItem.Login.route) {
             LoginScreen(authViewModel = viewModel.authViewModel, navController = navController)
         }
-        composable(BottomNavItem.Home.route) { HomeScreen(viewModel) }
+        composable(BottomNavItem.Home.route) { HomeScreen(viewModel = viewModel, navController = navController) }
         composable(BottomNavItem.Profile.route) { ProfileScreen() }
     }
 }

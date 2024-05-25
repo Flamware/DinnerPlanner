@@ -12,7 +12,13 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _authenticationState = MutableLiveData<Boolean>()
     val authenticationState: LiveData<Boolean> = _authenticationState
 
-    val users = userRepository.users
+    //user id by default is -1
+    private val _userId = MutableLiveData<Int>()
+    val userId: LiveData<Int> = _userId
+    fun getUserId(): Int {
+        return _userId.value ?: -1
+    }
+
 
     private val _loginState = MutableLiveData<Result<Unit>>()
     val loginState: LiveData<Result<Unit>> = _loginState
@@ -20,11 +26,15 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val isAuthenticated = userRepository.authenticate(username, password)
-                if (isAuthenticated == null || !isAuthenticated) {
-                    _loginState.value = Result.Error(Exception("Authentication failed"))
+                _userId.value = isAuthenticated
+                _authenticationState.value = isAuthenticated != -1
+                _loginState.value = Result.Success(Unit)
+                if (isAuthenticated != -1) {
+                    println("authenticated")
+                    println("user id: $_userId")
+                    println("username: $username")
                 } else {
-                    _authenticationState.value = isAuthenticated
-                    _loginState.value = Result.Success(Unit)
+                    println("not authenticated")
                 }
             } catch (e: Exception) {
                 _loginState.value = Result.Error(e)

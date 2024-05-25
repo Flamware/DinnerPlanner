@@ -2,7 +2,6 @@ package com.example.dinnerplanner.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,11 +11,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.dinnerplanner.RecipeEvent
+import com.example.dinnerplanner.RecipeState
 
 @Composable
 fun AddRecipeDialog(
-    onAddRecipe: (title: String, ingredients: List<String>, instructions: String) -> Unit,
-    onDismiss: () -> Unit
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var title by remember { mutableStateOf("") }
     var currentIngredient by remember { mutableStateOf("") }
@@ -31,26 +33,19 @@ fun AddRecipeDialog(
         }
     }
 
-    // Function to handle adding recipe
-    fun addRecipe() {
-        if (currentIngredient.isNotBlank()) {
-            addIngredient()
-        }
-        onAddRecipe(title, ingredients, instructions)
-        // Clear fields after adding recipe
-        title = ""
-        ingredients = emptyList()
-        instructions = ""
-        onDismiss() // Dismiss the dialog
-    }
-
     AlertDialog(
-        onDismissRequest = { onDismiss() },
+        onDismissRequest = { onEvent(RecipeEvent.HideDialog) },
         title = { Text("Add Recipe") },
         confirmButton = {
             Button(
                 onClick = {
-                    addRecipe()
+                    if (currentIngredient.isNotBlank()) {
+                        addIngredient()
+                    }
+                    onEvent(RecipeEvent.SaveRecipe)
+                    title = ""
+                    ingredients = emptyList()
+                    instructions = ""
                 },
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colors.primary)
             ) {
@@ -59,42 +54,35 @@ fun AddRecipeDialog(
         },
         dismissButton = {
             Button(
-                onClick = { onDismiss() }
+                onClick = { onEvent(RecipeEvent.HideDialog) }
             ) {
                 Text("Cancel")
             }
         },
         text = {
             Column(modifier = Modifier.padding(8.dp)) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("Title") },
+                TextField(
+                    value = state.recipeName,
+                    onValueChange = { onEvent(RecipeEvent.SetRecipeName(it)) },
+                    placeholder = { Text("Recipe name") },
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
-                // Add ingredients
-                ingredients.forEachIndexed { index, ingredient ->
-                    Text(
-                        text = "Ingredient ${index + 1}: $ingredient",
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                }
-                OutlinedTextField(
-                    value = currentIngredient,
-                    onValueChange = { currentIngredient = it },
-                    label = { Text("Add Ingredient") },
+                TextField(
+                    value = state.ingredients,
+                    onValueChange = { onEvent(RecipeEvent.SetIngredients(it)) },
+                    placeholder = { Text("Ingredients") },
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
-                Button(
-                    onClick = { addIngredient() },
-                    modifier = Modifier.padding(vertical = 8.dp)
-                ) {
+                Button(onClick = { addIngredient() }) {
                     Text("Add Ingredient")
                 }
-                OutlinedTextField(
-                    value = instructions,
-                    onValueChange = { instructions = it },
-                    label = { Text("Instructions") },
+                for (ingredient in ingredients) {
+                    Text(ingredient)
+                }
+                TextField(
+                    value = state.instructions,
+                    onValueChange = { onEvent(RecipeEvent.SetInstructions(it)) },
+                    placeholder = { Text("Instructions") },
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
@@ -106,7 +94,7 @@ fun AddRecipeDialog(
 @Composable
 fun AddRecipeDialogPreview() {
     AddRecipeDialog(
-        onAddRecipe = { _, _, _ -> /* Mock action */ },
-        onDismiss = { /* Mock action */ }
+        state = RecipeState(),
+        onEvent = { /* Mock action */ }
     )
 }

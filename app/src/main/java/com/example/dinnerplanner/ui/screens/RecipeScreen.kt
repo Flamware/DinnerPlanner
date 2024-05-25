@@ -17,11 +17,10 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dinnerplanner.AddRecipeDialog
 import com.example.dinnerplanner.RecipeEvent
 import com.example.dinnerplanner.RecipeState
-import com.example.dinnerplanner.SortType
 import com.example.dinnerplanner.ui.components.AddRecipeDialog
+import com.example.dinnerplanner.SortType
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable

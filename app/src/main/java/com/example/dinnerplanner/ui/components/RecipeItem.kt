@@ -36,7 +36,7 @@ fun RecipeItem(recipe: Recipe) {
 fun RecipeItemPreview() {
     RecipeItem(
         Recipe(
-            userId = "1",
+            userId = 1,
             title = "Spaghetti Carbonara",
             ingredients = "Spaghetti, eggs, bacon, parmesan cheese, black pepper",
             instructions = "Cook spaghetti. Fry bacon. Mix eggs, cheese, and pepper. Combine all."

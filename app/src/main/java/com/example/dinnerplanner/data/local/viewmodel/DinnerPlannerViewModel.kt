@@ -4,9 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.dinnerplanner.data.local.repository.UserRepository
 import com.example.dinnerplanner.data.local.database.dao.RecipeDao
+import com.example.dinnerplanner.data.local.repository.RecipeRepository
 import com.example.dinnerplanner.ui.viewmodel.RecipeViewModel
 
-class DinnerPlannerViewModel(application: Application, userRepository: UserRepository, recipeDao: RecipeDao) : AndroidViewModel(application) {
+class DinnerPlannerViewModel(application: Application, userRepository: UserRepository, recipeRepository: RecipeRepository) : AndroidViewModel(application) {
     val authViewModel = AuthViewModel(userRepository)
-    val recipeViewModel = RecipeViewModel(recipeDao)
+    val recipeViewModel = RecipeViewModel(recipeRepository)
 }

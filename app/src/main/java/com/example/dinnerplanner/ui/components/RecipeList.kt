@@ -33,19 +33,19 @@ fun RecipeListPreview() {
         MutableStateFlow(
             listOf(
                 Recipe(
-                    userId = "1",
+                    userId = 1,
                     title = "Spaghetti Carbonara",
                     ingredients = "Spaghetti, eggs, bacon, parmesan cheese, black pepper",
                     instructions = "Cook spaghetti. Fry bacon. Mix eggs, cheese, and pepper. Combine all."
                 ),
                 Recipe(
-                    userId = "1",
+                    userId = 1,
                     title = "Chicken Alfredo",
                     ingredients = "Fettuccine, chicken, heavy cream, parmesan cheese, garlic",
                     instructions = "Cook fettuccine. Cook chicken. Mix cream, cheese, and garlic. Combine all."
                 ),
                 Recipe(
-                    userId = "1",
+                    userId = 1,
                     title = "Beef Stroganoff",
                     ingredients = "Beef, mushrooms, onions, sour cream, egg noodles",
                     instructions = "Cook beef. Cook mushrooms and onions. Mix sour cream. Combine all."

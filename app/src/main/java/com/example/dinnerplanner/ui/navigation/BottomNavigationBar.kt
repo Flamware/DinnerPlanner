@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun BottomNavigationBar(currentItem: BottomNavItem, onItemSelect: (BottomNavItem) -> Unit) {
     BottomNavigation {
-        val navItems = listOf(BottomNavItem.Home, BottomNavItem.Login, BottomNavItem.Profile)
+        val navItems = listOf(BottomNavItem.Login,BottomNavItem.Home, BottomNavItem.Profile)
         navItems.forEach { item ->
             BottomNavigationItem(
                 icon = { Icon(item.icon, contentDescription = item.title) },

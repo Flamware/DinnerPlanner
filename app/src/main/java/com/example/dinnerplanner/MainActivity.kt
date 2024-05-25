@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val isLoggedIn = remember { mutableStateOf(false) }
                 var currentScreen by remember { mutableStateOf<BottomNavItem>(BottomNavItem.Home) }
-
                 Scaffold(
                     bottomBar = {
                         BottomNavigationBar(currentScreen) { screen ->
