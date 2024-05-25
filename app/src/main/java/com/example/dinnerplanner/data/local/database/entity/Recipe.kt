@@ -1,4 +1,4 @@
-package com.example.dinnerplanner
+package com.example.dinnerplanner.data.local.database.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -15,6 +15,9 @@ import androidx.room.PrimaryKey
 )
 data class Recipe(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val userId: Long, // Foreign key referencing User entity
+    val userId: String, // Foreign key referencing User entity
     val title: String,
-)
+    val ingredients: String,
+    val instructions: String
+) {
+}

@@ -1,5 +1,6 @@
-package com.example.dinnerplanner
+package com.example.dinnerplanner.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -16,11 +17,17 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dinnerplanner.AddRecipeDialog
+import com.example.dinnerplanner.RecipeEvent
+import com.example.dinnerplanner.RecipeState
+import com.example.dinnerplanner.SortType
+import com.example.dinnerplanner.ui.components.AddRecipeDialog
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun RecipeScreen(
-    state: RecipeState,
-    onEvent: (RecipeEvent) -> Unit
+        state: RecipeState,
+        onEvent: (RecipeEvent) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -77,7 +84,7 @@ fun RecipeScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "${recipe.recipeName}",
+                            text = "${recipe.title}",
                             fontSize = 20.sp
                         )
                         Text(text = recipe.ingredients, fontSize = 12.sp)

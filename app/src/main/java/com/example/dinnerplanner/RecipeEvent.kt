@@ -1,5 +1,7 @@
 package com.example.dinnerplanner
 
+import com.example.dinnerplanner.data.local.database.entity.Recipe
+
 sealed interface RecipeEvent {
     object SaveRecipe: RecipeEvent
     data class SetRecipeName(val recipeName: String): RecipeEvent

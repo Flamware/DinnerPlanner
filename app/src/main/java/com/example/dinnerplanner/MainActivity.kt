@@ -1,44 +1,69 @@
 package com.example.dinnerplanner
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.room.Room
-import com.example.dinnerplanner.ui.theme.RoomGuideAndroidTheme
-
-class RecipeActivity : ComponentActivity() {
-
-    private val db by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            CookItDB::class.java,
-            "cookItDB"
-        )
-            .build()
-    }
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.dinnerplanner.activity.DinnerPlanner
+import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
+import com.example.dinnerplanner.ui.navigation.BottomNavItem
+import com.example.dinnerplanner.ui.navigation.BottomNavigationBar
+import com.example.dinnerplanner.ui.navigation.NavGraph
+import com.example.dinnerplanner.ui.theme.DinnerPlannerTheme
 
 
-    private val viewModel by viewModels<RecipeViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return RecipeViewModel(db.recipeDao) as T
+class MainActivity : ComponentActivity() {
+    private lateinit var viewModel: DinnerPlannerViewModel
+
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val application = application as DinnerPlanner
+        if (!application.isDatabaseInitialized()) {
+            application.onCreate()
+        }
+        println("Database initialized: ${application.isDatabaseInitialized()}")
+        viewModel = application.viewModel
+
+        setContent {
+            DinnerPlannerTheme {
+                val navController = rememberNavController()
+                val isLoggedIn = remember { mutableStateOf(false) }
+                var currentScreen by remember { mutableStateOf<BottomNavItem>(BottomNavItem.Home) }
+
+                Scaffold(
+                    bottomBar = {
+                        BottomNavigationBar(currentScreen) { screen ->
+                            currentScreen = screen
+                            navController.navigate(screen.route)
+                        }
+                    }
+                ) {
+                    NavGraph(navController, isLoggedIn, viewModel)
                 }
             }
         }
-    )
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            RoomGuideAndroidTheme {
-                val state by viewModel.state.collectAsState()
-                RecipeScreen(state = state, onEvent = viewModel::onEvent)
-            }
-        }
+    }
+}
+
+@Composable
+fun Greeting(name: String) {
+    Text(text = "Hello $name!")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    DinnerPlannerTheme {
+        Greeting("Android")
     }
 }
