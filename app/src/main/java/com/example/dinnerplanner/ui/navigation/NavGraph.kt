@@ -11,12 +11,17 @@ import com.example.dinnerplanner.data.local.viewmodel.AuthViewModel
 import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
 
 @Composable
-fun NavGraph(navController: NavHostController, isLoggedIn: MutableState<Boolean>, viewModel: DinnerPlannerViewModel) {
-    NavHost(navController, startDestination = BottomNavItem.Login.route) {
+fun NavGraph(navController: NavHostController,  viewModel: DinnerPlannerViewModel) {
+
+    NavHost(navController, startDestination = BottomNavItem.Home.route) {
+
         composable(BottomNavItem.Login.route) {
             LoginScreen(authViewModel = viewModel.authViewModel, navController = navController)
         }
-        composable(BottomNavItem.Home.route) { HomeScreen(viewModel = viewModel, navController = navController) }
-        composable(BottomNavItem.Profile.route) { ProfileScreen() }
+        composable(BottomNavItem.Home.route) {
+            HomeScreen(viewModel = viewModel, navController = navController) }
+
+        composable(BottomNavItem.Profile.route) {
+            ProfileScreen(viewModel = viewModel, navController = navController) }
     }
 }

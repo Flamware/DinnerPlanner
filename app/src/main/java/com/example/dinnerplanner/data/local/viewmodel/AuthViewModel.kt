@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dinnerplanner.data.local.database.entity.User
 import com.example.dinnerplanner.data.local.repository.UserRepository
 import kotlinx.coroutines.launch
 
@@ -12,28 +13,34 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _authenticationState = MutableLiveData<Boolean>()
     val authenticationState: LiveData<Boolean> = _authenticationState
 
-    //user id by default is -1
-    private val _userId = MutableLiveData<Int>()
-    val userId: LiveData<Int> = _userId
-    fun getUserId(): Int {
-        return _userId.value ?: -1
-    }
-
+    private val _currentUser = MutableLiveData<User?>()
+    val currentUser: LiveData<User?> = _currentUser
 
     private val _loginState = MutableLiveData<Result<Unit>>()
     val loginState: LiveData<Result<Unit>> = _loginState
+
+    private val _registerState = MutableLiveData<Result<Unit>>()
+    val registrationState: LiveData<Result<Unit>> = _registerState
+
     fun login(username: String, password: String) {
+        if (username.isEmpty() || password.isEmpty()) {
+            _loginState.value = Result.Error(IllegalArgumentException("Username and password must not be empty"))
+            return
+        }
+
         viewModelScope.launch {
             try {
-                val isAuthenticated = userRepository.authenticate(username, password)
-                _userId.value = isAuthenticated
-                _authenticationState.value = isAuthenticated != -1
-                _loginState.value = Result.Success(Unit)
-                if (isAuthenticated != -1) {
+                val user = userRepository.authenticate(username, password)
+                if (user != null) {
+                    _currentUser.value = user
+                    _authenticationState.value = true
+                    _loginState.value = Result.Success(Unit)
                     println("authenticated")
-                    println("user id: $_userId")
+                    println("user id: ${user.id}")
                     println("username: $username")
                 } else {
+                    _authenticationState.value = false
+                    _loginState.value = Result.Error(Exception("Invalid credentials"))
                     println("not authenticated")
                 }
             } catch (e: Exception) {
@@ -42,32 +49,23 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
-    fun validateUsername(username: String): Boolean {
-        // Add your validation logic here. For example:
-        return username.isNotEmpty() && username.length >= 3
-    }
-
-    fun validatePassword(password: String): Boolean {
-        // Add your validation logic here. For example:
-        return password.isNotEmpty()
-    }
-
-    private val _registrationState = MutableLiveData<Result<Unit>>()
-    val registrationState: LiveData<Result<Unit>> = _registrationState
-
     fun register(username: String, password: String) {
-        println("register: $username, $password")
         viewModelScope.launch {
             try {
                 userRepository.insertUser(username, password)
-                _registrationState.value = Result.Success(Unit)
+                _registerState.value = Result.Success(Unit)
             } catch (e: Exception) {
-                _registrationState.value = Result.Error(e)
-                println("error: $e")
+                _registerState.value = Result.Error(e)
             }
         }
     }
 
+
+    fun logout() {
+        _currentUser.value = null
+        _authenticationState.value = false
+        _loginState.value = null
+    }
 
     sealed class Result<out T> {
         data class Success<out T>(val data: T) : Result<T>()

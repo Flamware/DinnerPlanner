@@ -4,7 +4,6 @@ import com.example.dinnerplanner.data.local.database.entity.User
 import com.example.dinnerplanner.data.local.database.dao.UserDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import java.util.UUID
 
 class UserRepository(private val userDao: UserDao) {
     val users: Flow<List<User>> = userDao.getAllUsers()
@@ -32,8 +31,7 @@ class UserRepository(private val userDao: UserDao) {
         }
     }
 
-    suspend fun authenticate(username: String, password: String): Int {
-        val user = userDao.getUser(username, password).firstOrNull()
-        return user?.id ?: -1
+    suspend fun authenticate(username: String, password: String): User? {
+        return userDao.getUser(username, password).firstOrNull()
     }
 }

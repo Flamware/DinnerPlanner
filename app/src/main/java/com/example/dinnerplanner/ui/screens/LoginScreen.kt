@@ -29,7 +29,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dinnerplanner.R
 import com.example.dinnerplanner.data.local.viewmodel.AuthViewModel
@@ -37,9 +36,10 @@ import com.example.dinnerplanner.data.local.viewmodel.AuthViewModel
 fun LoginScreen(authViewModel: AuthViewModel, navController: NavController) {
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    val authenticationState by authViewModel.authenticationState.observeAsState()
+    val currentUser by authViewModel.currentUser.observeAsState()
     val registrationState by authViewModel.registrationState.observeAsState()
     val loginState by authViewModel.loginState.observeAsState()
+
     Image(
         painter = painterResource(id = R.drawable.dinner_planner),
         contentDescription = "Dinner Planner",
@@ -80,10 +80,7 @@ fun LoginScreen(authViewModel: AuthViewModel, navController: NavController) {
             ) {
                 Button(onClick = {
                     // Handle login
-                    val isUsernameValid = authViewModel.validateUsername(username.value)
-                    val isPasswordValid = authViewModel.validatePassword(password.value)
-
-                    if (isUsernameValid && isPasswordValid)
+                    if (username.value.isNotEmpty() && password.value.isNotEmpty())
                         authViewModel.login(username.value, password.value)
                 }) {
                     Text("Log in")

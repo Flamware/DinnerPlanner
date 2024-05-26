@@ -13,19 +13,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dinnerplanner.data.local.database.entity.Recipe
-
+import com.example.dinnerplanner.data.local.database.entity.Ingredient
 @Composable
-fun RecipeItem(recipe: Recipe) {
+fun RecipeItem(recipe: Recipe, ingredients: List<Ingredient>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(3.dp)
             .clickable { /* TODO: Handle item click */ },
+
         elevation = CardDefaults.cardElevation(2.dp)  // Use CardDefaults.cardElevation for elevation
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = recipe.title, fontSize = 20.sp, modifier = Modifier.padding(bottom = 8.dp))
-            Text(text = recipe.ingredients, fontSize = 16.sp, modifier = Modifier.padding(bottom = 8.dp))
+            for (ingredient in ingredients) {
+                Text(text = "${ingredient.name} - ${ingredient.quantity}", fontSize = 14.sp)
+            }
             Text(text = recipe.instructions, fontSize = 14.sp)
         }
     }
@@ -33,13 +36,15 @@ fun RecipeItem(recipe: Recipe) {
 
 @Preview
 @Composable
-fun RecipeItemPreview() {
-    RecipeItem(
-        Recipe(
-            userId = 1,
-            title = "Spaghetti Carbonara",
-            ingredients = "Spaghetti, eggs, bacon, parmesan cheese, black pepper",
-            instructions = "Cook spaghetti. Fry bacon. Mix eggs, cheese, and pepper. Combine all."
-        )
+fun PreviewRecipeItem() {
+    val recipe = Recipe(
+        userId = 1,
+        title = "Recipe 1",
+        instructions = "Instructions 1"
     )
+    val ingredients = listOf(
+        Ingredient(name = "Ingredient 1", quantity = "1", recipeId = -1),
+        Ingredient(name = "Ingredient 2", quantity = "2", recipeId = -1)
+    )
+    RecipeItem(recipe, ingredients)
 }

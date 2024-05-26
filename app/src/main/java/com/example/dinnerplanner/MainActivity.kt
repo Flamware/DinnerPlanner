@@ -7,7 +7,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -19,7 +21,6 @@ import com.example.dinnerplanner.ui.navigation.BottomNavItem
 import com.example.dinnerplanner.ui.navigation.BottomNavigationBar
 import com.example.dinnerplanner.ui.navigation.NavGraph
 import com.example.dinnerplanner.ui.theme.DinnerPlannerTheme
-
 
 class MainActivity : ComponentActivity() {
     private lateinit var viewModel: DinnerPlannerViewModel
@@ -37,17 +38,34 @@ class MainActivity : ComponentActivity() {
         setContent {
             DinnerPlannerTheme {
                 val navController = rememberNavController()
-                val isLoggedIn = remember { mutableStateOf(false) }
                 var currentScreen by remember { mutableStateOf<BottomNavItem>(BottomNavItem.Home) }
+
+                // Observe userId LiveData
+                val userId by viewModel.authViewModel.currentUser.observeAsState()
+                val isLoggedIn = userId != null
+
+
+                val items = if (isLoggedIn) {
+                    println("User is logged in")
+                    listOf(BottomNavItem.Home, BottomNavItem.Profile)
+                } else {
+                    println("User is not logged in")
+                    listOf(BottomNavItem.Login, BottomNavItem.Home)
+                }
+
                 Scaffold(
                     bottomBar = {
-                        BottomNavigationBar(currentScreen) { screen ->
-                            currentScreen = screen
-                            navController.navigate(screen.route)
-                        }
+                        BottomNavigationBar(
+                            items = items,
+                            currentItem = currentScreen,
+                            onItemSelect = { screen ->
+                                currentScreen = screen
+                                navController.navigate(screen.route)
+                            }
+                        )
                     }
                 ) {
-                    NavGraph(navController, isLoggedIn, viewModel)
+                    NavGraph(navController = navController, viewModel = viewModel)
                 }
             }
         }

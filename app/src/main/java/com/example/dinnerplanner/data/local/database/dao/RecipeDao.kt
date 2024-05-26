@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.Flow
 interface RecipeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(recipe: Recipe): Long
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertRecipe(recipe: Recipe)
 
     @Delete
@@ -21,13 +23,10 @@ interface RecipeDao {
     fun getRecipesOrderedByRecipeName(): Flow<List<Recipe>>
 
     // Replace 'ingredients' and 'instructions' with actual fields if they exist in your Recipe class
-    @Query("SELECT * FROM recipes ORDER BY ingredients ASC")
-    fun getRecipesOrderedByIngredients(): Flow<List<Recipe>>
 
-    @Query("SELECT * FROM recipes ORDER BY instructions ASC")
-    fun getRecipesOrderedByInstructions(): Flow<List<Recipe>>
 
-    @Query("INSERT INTO recipes (title, ingredients, instructions) VALUES (:title, :ingredients, :instructions)")
-    suspend fun addRecipe(title: String, ingredients: String, instructions: String)
+
+    @Query("INSERT INTO recipes (title, instructions) VALUES (:title, :instructions)")
+    suspend fun addRecipe(title: String, instructions: String)
 
 }

@@ -7,18 +7,21 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun BottomNavigationBar(currentItem: BottomNavItem, onItemSelect: (BottomNavItem) -> Unit) {
+fun BottomNavigationBar(
+    items: List<BottomNavItem>,
+    currentItem: BottomNavItem,
+    onItemSelect: (BottomNavItem) -> Unit
+) {
     BottomNavigation {
-        val navItems = listOf(BottomNavItem.Login,BottomNavItem.Home, BottomNavItem.Profile)
-        navItems.forEach { item ->
+        items.forEach { item ->
             BottomNavigationItem(
-                icon = { Icon(item.icon, contentDescription = item.title) },
+                icon = { Icon(item.icon, contentDescription = null) },
                 label = { Text(item.title) },
-                selected = item == currentItem,
-                onClick = { onItemSelect(item) },
-                alwaysShowLabel = false
+                selected = currentItem == item,
+                onClick = { onItemSelect(item) }
             )
         }
     }
 }
+
 

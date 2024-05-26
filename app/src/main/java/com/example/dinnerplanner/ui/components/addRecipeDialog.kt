@@ -1,6 +1,7 @@
 package com.example.dinnerplanner.ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -13,24 +14,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dinnerplanner.RecipeEvent
 import com.example.dinnerplanner.RecipeState
-
+import com.example.dinnerplanner.data.local.database.entity.Ingredient
 @Composable
 fun AddRecipeDialog(
     state: RecipeState,
     onEvent: (RecipeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var title by remember { mutableStateOf("") }
-    var currentIngredient by remember { mutableStateOf("") }
-    var ingredients by remember { mutableStateOf(listOf<String>()) }
-    var instructions by remember { mutableStateOf("") }
+    var ingredients by remember { mutableStateOf(listOf(Ingredient(name = "", quantity = "0", recipeId = -1))) } // Initialize with an empty list"
+    var newIngredientName by remember { mutableStateOf("") }
+    var newIngredientQuantity by remember { mutableStateOf("") }
 
     // Function to handle adding ingredient
     fun addIngredient() {
-        if (currentIngredient.isNotBlank()) {
-            ingredients = ingredients + currentIngredient
-            currentIngredient = ""
-        }
+        val newIngredient = Ingredient(name = newIngredientName, quantity = newIngredientQuantity, recipeId = -1)
+        ingredients = ingredients + newIngredient
+        newIngredientName = ""
+        newIngredientQuantity = ""
     }
 
     AlertDialog(
@@ -39,13 +39,9 @@ fun AddRecipeDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (currentIngredient.isNotBlank()) {
-                        addIngredient()
-                    }
+                    onEvent(RecipeEvent.SetIngredients(ingredients))
                     onEvent(RecipeEvent.SaveRecipe)
-                    title = ""
-                    ingredients = emptyList()
-                    instructions = ""
+                    ingredients = listOf(Ingredient(name = "", recipeId = -1, quantity = "0"))
                 },
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colors.primary)
             ) {
@@ -65,19 +61,32 @@ fun AddRecipeDialog(
                     value = state.recipeName,
                     onValueChange = { onEvent(RecipeEvent.SetRecipeName(it)) },
                     placeholder = { Text("Recipe name") },
-                    modifier = Modifier.padding(vertical = 8.dp)
                 )
-                TextField(
-                    value = state.ingredients,
-                    onValueChange = { onEvent(RecipeEvent.SetIngredients(it)) },
-                    placeholder = { Text("Ingredients") },
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+                // Map over the ingredients list to create a TextField for each item
+                ingredients.forEachIndexed { index, currentIngredient ->
+                    var ingredientName by remember { mutableStateOf(currentIngredient.name) }
+                    var ingredientQuantity by remember { mutableStateOf(currentIngredient.quantity) }
+                    Row {
+                        TextField(
+                            value = ingredientName,
+                            onValueChange = { ingredientName = it },
+                            placeholder = { Text("Ingredient name") },
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .weight(1f)
+                        )
+                        TextField(
+                            value = ingredientQuantity,
+                            onValueChange = { ingredientQuantity = it },
+                            placeholder = { Text("Quantity") },
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .weight(1f)
+                        )
+                    }
+                }
                 Button(onClick = { addIngredient() }) {
                     Text("Add Ingredient")
-                }
-                for (ingredient in ingredients) {
-                    Text(ingredient)
                 }
                 TextField(
                     value = state.instructions,
@@ -89,12 +98,11 @@ fun AddRecipeDialog(
         }
     )
 }
-
 @Preview
 @Composable
 fun AddRecipeDialogPreview() {
     AddRecipeDialog(
         state = RecipeState(),
-        onEvent = { /* Mock action */ }
+        onEvent = { }
     )
 }

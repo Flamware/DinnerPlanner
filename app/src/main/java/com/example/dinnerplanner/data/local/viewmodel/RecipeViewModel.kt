@@ -27,7 +27,9 @@ class RecipeViewModel(private val repository: RecipeRepository) : ViewModel() {
             }
         }
     }
-
+    suspend fun insert(recipe: Recipe): Long {
+        return repository.insert(recipe)
+    }
     fun upsertRecipe(recipe: Recipe) = viewModelScope.launch {
         repository.upsertRecipe(recipe)
     }

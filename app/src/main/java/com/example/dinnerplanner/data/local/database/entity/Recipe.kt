@@ -18,7 +18,6 @@ data class Recipe(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val userId: Int,
     val title: String,
-    val ingredients: String,
     val instructions: String
 ) {
 }
