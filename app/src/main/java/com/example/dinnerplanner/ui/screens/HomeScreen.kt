@@ -75,6 +75,7 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
                             )
                             val recipeId = viewModel.recipeViewModel.insert(recipe)
                             recipeState.ingredients.forEach { ingredient ->
+                                println("Inserting ingredient: $ingredient")
                                 viewModel.ingredientViewModel.upsertIngredient(ingredient.copy(recipeId = recipeId))
                             }
                             showDialog = false
