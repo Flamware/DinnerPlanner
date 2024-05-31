@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
                 val items = if (isLoggedIn) {
                     println("User is logged in")
-                    listOf(BottomNavItem.Home, BottomNavItem.UserList, BottomNavItem.Profile)
+                    listOf(BottomNavItem.Home, BottomNavItem.UserList,BottomNavItem.Planning, BottomNavItem.Profile)
                 } else {
                     println("User is not logged in")
                     listOf(BottomNavItem.Login, BottomNavItem.UserList, BottomNavItem.Home)

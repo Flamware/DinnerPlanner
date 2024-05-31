@@ -75,7 +75,8 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
                                 userId = session.value?.id ?: -1,
                                 title = recipeState.recipeName,
                                 instructions = recipeState.instructions,
-                                author = session.value?.username ?: ""
+                                author = session.value?.username ?: "",
+                                mealType = recipeState.mealType
                             )
                             val recipeId = viewModel.recipeViewModel.insert(recipe)
                             println("Inserted recipe with id: $recipeId")
@@ -93,6 +94,7 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
                     is RecipeEvent.DeleteRecipe -> { /* Handle DeleteRecipe event here */ }
                     is RecipeEvent.ShowDialog -> { /* Handle ShowDialog event here */ }
                     is RecipeEvent.SortRecipes -> { /* Handle SortRecipes event here */ }
+                    is RecipeEvent.SetMealType -> {recipeState = recipeState.copy(mealType = event.mealType)}
                 }
             }
         )

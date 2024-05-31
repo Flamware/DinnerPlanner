@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.dinnerplanner.data.local.database.entity.User
 import com.example.dinnerplanner.data.local.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
@@ -18,11 +21,14 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _currentUser = MutableLiveData<User?>()
     val currentUser: LiveData<User?> = _currentUser
 
-    private val _loginState = MutableLiveData<Result<Unit>>()
-    val loginState: LiveData<Result<Unit>> = _loginState
+    private val _loginState = MutableLiveData<Result<Unit>?>()
+    val loginState: LiveData<Result<Unit>?> = _loginState
 
     private val _registerState = MutableLiveData<Result<Unit>>()
     val registrationState: LiveData<Result<Unit>> = _registerState
+
+    private val _searchResults = MutableLiveData<List<User>>()
+    val searchResults: LiveData<List<User>> = _searchResults
 
     fun getUserById(id: Int): Flow<User> {
         return userRepository.getUserById(id)
@@ -53,7 +59,15 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
             }
         }
     }
-
+    fun searchUser(newText: String) {
+        viewModelScope.launch {
+            val results = userRepository.getAllUsers()
+                .firstOrNull()
+                ?.filter { user -> user.username.contains(newText, ignoreCase = true) }
+                ?: emptyList()
+            _searchResults.value = results
+        }
+    }
     fun register(username: String, password: String) {
         viewModelScope.launch {
             try {

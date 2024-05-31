@@ -32,5 +32,8 @@ fun NavGraph(navController: NavHostController, viewModel: DinnerPlannerViewModel
                 navController.navigate(BottomNavItem.UserList.route)
             }
         }
+        composable(BottomNavItem.Planning.route) {
+            PlanningScreen()
+        }
     }
 }

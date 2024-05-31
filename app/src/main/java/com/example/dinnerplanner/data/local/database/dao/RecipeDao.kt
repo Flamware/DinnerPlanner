@@ -15,18 +15,15 @@ interface RecipeDao {
     suspend fun insert(recipe: Recipe): Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertRecipe(recipe: Recipe)
-
     @Delete
     suspend fun deleteRecipe(recipe: Recipe)
-
     @Query("SELECT * FROM recipes ORDER BY title ASC")
     fun getRecipesOrderedByRecipeName(): Flow<List<Recipe>>
 
-    // Replace 'ingredients' and 'instructions' with actual fields if they exist in your Recipe class
-
-
-
     @Query("INSERT INTO recipes (title, instructions) VALUES (:title, :instructions)")
     suspend fun addRecipe(title: String, instructions: String)
+
+    @Query("SELECT * FROM recipes WHERE userId = :userId")
+    fun getAllRecipesByUserId(userId: Int): Flow<List<Recipe>>
 
 }

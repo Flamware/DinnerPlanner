@@ -2,6 +2,8 @@ package com.example.dinnerplanner.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -9,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.dinnerplanner.RecipeEvent
 import com.example.dinnerplanner.RecipeState
 import com.example.dinnerplanner.data.local.database.entity.Ingredient
+import com.example.dinnerplanner.data.local.database.entity.MealType
 
 @Composable
 fun AddRecipeDialog(
@@ -17,6 +20,9 @@ fun AddRecipeDialog(
     modifier: Modifier = Modifier
 ) {
     var ingredients by remember { mutableStateOf(state.ingredients) }
+    var mealType by remember { mutableStateOf(MealType.BREAKFAST.name) } // Default to breakfast
+    val mealTypes = MealType.values().map { it.name } // Get all meal types
+    var expanded by remember { mutableStateOf(false) } // For controlling the visibility of the DropdownMenu
 
     // Function to handle adding an empty ingredient
     fun addIngredient() {
@@ -32,6 +38,7 @@ fun AddRecipeDialog(
                     // Filter out ingredients with empty names
                     val validIngredients = ingredients.filter { it.name.isNotEmpty() }
                     onEvent(RecipeEvent.SetIngredients(validIngredients))
+                    onEvent(RecipeEvent.SetMealType(mealType))
                     onEvent(RecipeEvent.SaveRecipe)
                     ingredients = listOf(Ingredient(name = "", recipeId = -1, quantity = "0"))
                 },
@@ -47,6 +54,22 @@ fun AddRecipeDialog(
         },
         text = {
             Column(modifier = Modifier.padding(8.dp)) {
+                Box {
+                    TextButton(onClick = { expanded = true }) {
+                        Text(mealType)
+                        Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
+                    }
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        mealTypes.forEach { type ->
+                            DropdownMenuItem(onClick = {
+                                mealType = type
+                                expanded = false
+                            }) {
+                                Text(type)
+                            }
+                        }
+                    }
+                }
                 TextField(
                     value = state.recipeName,
                     onValueChange = { onEvent(RecipeEvent.SetRecipeName(it)) },

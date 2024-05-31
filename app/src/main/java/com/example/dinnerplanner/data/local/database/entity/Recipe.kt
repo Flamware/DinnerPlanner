@@ -1,10 +1,14 @@
 package com.example.dinnerplanner.data.local.database.entity
 
-import androidx.lifecycle.LiveData
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-
+enum class MealType {
+    BREAKFAST,
+    LUNCH,
+    DINNER,
+    OTHER
+}
 @Entity(
     tableName = "recipes",
     foreignKeys = [
@@ -12,7 +16,7 @@ import androidx.room.PrimaryKey
             entity = User::class,
             parentColumns = ["id"],
             childColumns = ["userId"],
-            onDelete = ForeignKey.CASCADE // Optional: Define onDelete behavior
+            onDelete = ForeignKey.CASCADE
         )]
 )
 data class Recipe(
@@ -20,5 +24,6 @@ data class Recipe(
     val userId: Int,
     val title: String,
     val instructions: String,
-    val author: String
+    val author: String,
+    val mealType: String // Store the MealType as a String
 )

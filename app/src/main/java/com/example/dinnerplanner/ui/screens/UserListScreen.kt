@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.ButtonDefaults.buttonElevation
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.dinnerplanner.ui.components.UserSearch
 
 @Composable
 fun UserListItem(user: User, navController: NavController) {
@@ -46,10 +47,13 @@ fun UserListScreen(navController: NavController, viewModel: DinnerPlannerViewMod
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        UserSearch(viewModel = viewModel.authViewModel, navController = navController)
         Box(modifier = Modifier.weight(1f)) {
             LazyColumn(
                 modifier = Modifier.padding(16.dp)  // Add padding around LazyColumn
             ) {
+
+                // Use items() to display each user
                 items(users) { user ->
                     UserListItem(user = user, navController = navController)
                     Spacer(modifier = Modifier.height(8.dp)) // Add space between buttons
