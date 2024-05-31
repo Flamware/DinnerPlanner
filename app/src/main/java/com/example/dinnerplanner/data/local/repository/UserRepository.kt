@@ -16,6 +16,9 @@ class UserRepository(private val userDao: UserDao) {
         return userDao.getUser(username)
     }
 
+    fun getUserById(id: Int): Flow<User> {
+        return userDao.getUserById(id)
+    }
     fun getUserId(username: String): Int {
         println("getUserId: ${userDao.getUserId(username)}")
         return userDao.getUserId(username)

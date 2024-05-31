@@ -1,36 +1,26 @@
 package com.example.dinnerplanner.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dinnerplanner.RecipeEvent
 import com.example.dinnerplanner.RecipeState
 import com.example.dinnerplanner.data.local.database.entity.Ingredient
+
 @Composable
 fun AddRecipeDialog(
     state: RecipeState,
     onEvent: (RecipeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var ingredients by remember { mutableStateOf(listOf(Ingredient(name = "", quantity = "0", recipeId = -1))) } // Initialize with an empty list"
-    var newIngredientName by remember { mutableStateOf("") }
-    var newIngredientQuantity by remember { mutableStateOf("") }
+    var ingredients by remember { mutableStateOf(state.ingredients) }
 
-    // Function to handle adding ingredient
+    // Function to handle adding an empty ingredient
     fun addIngredient() {
-        val newIngredient = Ingredient(name = newIngredientName, quantity = newIngredientQuantity, recipeId = -1)
-        ingredients = ingredients + newIngredient
-        newIngredientName = ""
-        newIngredientQuantity = ""
+        ingredients = ingredients + Ingredient(name = "", quantity = "0", recipeId = -1)
     }
 
     AlertDialog(
@@ -39,7 +29,9 @@ fun AddRecipeDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onEvent(RecipeEvent.SetIngredients(ingredients))
+                    // Filter out ingredients with empty names
+                    val validIngredients = ingredients.filter { it.name.isNotEmpty() }
+                    onEvent(RecipeEvent.SetIngredients(validIngredients))
                     onEvent(RecipeEvent.SaveRecipe)
                     ingredients = listOf(Ingredient(name = "", recipeId = -1, quantity = "0"))
                 },
@@ -49,9 +41,7 @@ fun AddRecipeDialog(
             }
         },
         dismissButton = {
-            Button(
-                onClick = { onEvent(RecipeEvent.HideDialog) }
-            ) {
+            Button(onClick = { onEvent(RecipeEvent.HideDialog) }) {
                 Text("Cancel")
             }
         },
@@ -62,14 +52,18 @@ fun AddRecipeDialog(
                     onValueChange = { onEvent(RecipeEvent.SetRecipeName(it)) },
                     placeholder = { Text("Recipe name") },
                 )
-                // Map over the ingredients list to create a TextField for each item
-                ingredients.forEachIndexed { index, currentIngredient ->
-                    var ingredientName by remember { mutableStateOf(currentIngredient.name) }
-                    var ingredientQuantity by remember { mutableStateOf(currentIngredient.quantity) }
+                ingredients.forEachIndexed { index, ingredient ->
+                    var ingredientName by remember { mutableStateOf(ingredient.name) }
+                    var ingredientQuantity by remember { mutableStateOf(ingredient.quantity) }
                     Row {
                         TextField(
                             value = ingredientName,
-                            onValueChange = { ingredientName = it },
+                            onValueChange = {
+                                ingredientName = it
+                                ingredients = ingredients.toMutableList().apply {
+                                    this[index] = this[index].copy(name = ingredientName)
+                                }
+                            },
                             placeholder = { Text("Ingredient name") },
                             modifier = Modifier
                                 .padding(end = 8.dp)
@@ -77,7 +71,12 @@ fun AddRecipeDialog(
                         )
                         TextField(
                             value = ingredientQuantity,
-                            onValueChange = { ingredientQuantity = it },
+                            onValueChange = {
+                                ingredientQuantity = it
+                                ingredients = ingredients.toMutableList().apply {
+                                    this[index] = this[index].copy(quantity = ingredientQuantity)
+                                }
+                            },
                             placeholder = { Text("Quantity") },
                             modifier = Modifier
                                 .padding(end = 8.dp)
@@ -98,6 +97,7 @@ fun AddRecipeDialog(
         }
     )
 }
+
 @Preview
 @Composable
 fun AddRecipeDialogPreview() {

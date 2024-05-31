@@ -8,14 +8,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dinnerplanner.data.local.database.entity.Recipe
 import com.example.dinnerplanner.data.local.database.entity.Ingredient
+import kotlinx.coroutines.flow.Flow
+
 @Composable
-fun RecipeItem(recipe: Recipe, ingredients: List<Ingredient>) {
+fun RecipeItem(recipe: Recipe, ingredientsFlow: Flow<List<Ingredient>>) {
+    val ingredients by ingredientsFlow.collectAsState(initial = emptyList())
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -30,21 +35,8 @@ fun RecipeItem(recipe: Recipe, ingredients: List<Ingredient>) {
                 Text(text = "${ingredient.name} - ${ingredient.quantity}", fontSize = 14.sp)
             }
             Text(text = recipe.instructions, fontSize = 14.sp)
+            Text(text = "Créé par ${recipe.author}", fontSize = 14.sp)
         }
     }
 }
 
-@Preview
-@Composable
-fun PreviewRecipeItem() {
-    val recipe = Recipe(
-        userId = 1,
-        title = "Recipe 1",
-        instructions = "Instructions 1"
-    )
-    val ingredients = listOf(
-        Ingredient(name = "Ingredient 1", quantity = "1", recipeId = -1),
-        Ingredient(name = "Ingredient 2", quantity = "2", recipeId = -1)
-    )
-    RecipeItem(recipe, ingredients)
-}

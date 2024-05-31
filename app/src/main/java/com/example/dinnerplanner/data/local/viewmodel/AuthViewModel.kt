@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dinnerplanner.data.local.database.entity.User
 import com.example.dinnerplanner.data.local.repository.UserRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     private val _authenticationState = MutableLiveData<Boolean>()
     val authenticationState: LiveData<Boolean> = _authenticationState
+    val users: Flow<List<User>> = userRepository.getAllUsers()
 
     private val _currentUser = MutableLiveData<User?>()
     val currentUser: LiveData<User?> = _currentUser
@@ -22,6 +24,9 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _registerState = MutableLiveData<Result<Unit>>()
     val registrationState: LiveData<Result<Unit>> = _registerState
 
+    fun getUserById(id: Int): Flow<User> {
+        return userRepository.getUserById(id)
+    }
     fun login(username: String, password: String) {
         if (username.isEmpty() || password.isEmpty()) {
             _loginState.value = Result.Error(IllegalArgumentException("Username and password must not be empty"))

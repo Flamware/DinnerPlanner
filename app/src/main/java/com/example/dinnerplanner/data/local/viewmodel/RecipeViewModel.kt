@@ -12,13 +12,7 @@ import kotlinx.coroutines.launch
 
 class RecipeViewModel(private val repository: RecipeRepository) : ViewModel() {
     val recipes: StateFlow<List<Recipe>> = repository.getRecipesOrderedByRecipeName()
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-    init {
-        println("RecipeViewModel init")
-        printRecipes()
-    }
-
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     private fun printRecipes() = viewModelScope.launch {
         recipes.collect { recipeList ->
             recipeList.forEach { recipe ->

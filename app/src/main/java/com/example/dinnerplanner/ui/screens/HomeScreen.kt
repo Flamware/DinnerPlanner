@@ -1,8 +1,6 @@
 package com.example.dinnerplanner.ui.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -21,9 +19,9 @@ import com.example.dinnerplanner.ui.navigation.BottomNavItem
 import com.example.dinnerplanner.ui.navigation.BottomNavigationBar
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+
 @Composable
 fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) {
-
     // State for managing the dialog visibility
     var showDialog by remember { mutableStateOf(false) }
 
@@ -32,26 +30,30 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
 
     val recipesFlow = viewModel.recipeViewModel.recipes
 
-    val userId = viewModel.authViewModel.currentUser.observeAsState()
+    val session = viewModel.authViewModel.currentUser.observeAsState()
 
     Column(
-        modifier = Modifier
+        modifier = Modifier.fillMaxSize()
     ) {
+        // Use Modifier.weight(1f) to make LazyColumn take the available space
+        Box(modifier = Modifier.weight(1f)) {
+            RecipeList(recipes = recipesFlow, ingredientViewModel = viewModel.ingredientViewModel)
+        }
 
-        RecipeList(recipes = recipesFlow, ingredients = recipeState.ingredients)
-
+        // Button to add a recipe
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .padding(bottom = 56.dp),
             onClick = {
-                if (userId.value != null) {
+                if (session.value != null) {
                     showDialog = true
-                }
-                else {
+                } else {
                     navController.navigate("login")
                 }
-            }) {
+            }
+        ) {
             Text(text = "Add Recipe")
         }
     }
@@ -67,18 +69,23 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
                     is RecipeEvent.SetInstructions -> recipeState = recipeState.copy(instructions = event.instructions)
 
                     is RecipeEvent.SaveRecipe -> {
+                        println("Saving recipe: $recipeState")
                         viewModel.viewModelScope.launch {
                             val recipe = Recipe(
-                                userId = userId.value?.id ?: -1,
+                                userId = session.value?.id ?: -1,
                                 title = recipeState.recipeName,
-                                instructions = recipeState.instructions
+                                instructions = recipeState.instructions,
+                                author = session.value?.username ?: ""
                             )
                             val recipeId = viewModel.recipeViewModel.insert(recipe)
+                            println("Inserted recipe with id: $recipeId")
+                            println("Ingredients to save: ${recipeState.ingredients}")
                             recipeState.ingredients.forEach { ingredient ->
                                 println("Inserting ingredient: $ingredient")
                                 viewModel.ingredientViewModel.upsertIngredient(ingredient.copy(recipeId = recipeId))
                             }
                             showDialog = false
+                            recipeState = RecipeState()
                         }
                     }
 
