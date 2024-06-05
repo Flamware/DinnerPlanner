@@ -39,7 +39,7 @@ fun ProfileScreen(navController: NavController, viewModel: DinnerPlannerViewMode
                 contentDescription = "Dinner Planner",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(250.dp)
                     .clip(CircleShape)
                     .background(Color.Blue)
 
