@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.dinnerplanner.data.local.database.entity.Ingredient
 import com.example.dinnerplanner.data.local.repository.IngredientRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class IngredientViewModel(private val repository: IngredientRepository) : ViewModel() {
@@ -29,5 +28,9 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
         viewModelScope.launch {
             repository.upsertIngredient(copy)
         }
+    }
+
+    fun ingredientsByRecipeId(recipeId: Long?): Flow<List<Ingredient>> {
+        return repository.ingredientsByRecipeId(recipeId)
     }
 }

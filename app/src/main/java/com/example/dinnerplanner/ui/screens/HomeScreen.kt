@@ -37,7 +37,7 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
     ) {
         // Use Modifier.weight(1f) to make LazyColumn take the available space
         Box(modifier = Modifier.weight(1f)) {
-            RecipeList(recipes = recipesFlow, ingredientViewModel = viewModel.ingredientViewModel)
+            RecipeList(recipes = recipesFlow, viewModel = viewModel)
         }
 
         // Button to add a recipe
@@ -95,6 +95,11 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
                     is RecipeEvent.ShowDialog -> { /* Handle ShowDialog event here */ }
                     is RecipeEvent.SortRecipes -> { /* Handle SortRecipes event here */ }
                     is RecipeEvent.SetMealType -> {recipeState = recipeState.copy(mealType = event.mealType)}
+                    is RecipeEvent.LikeRecipe -> {
+                        viewModel.viewModelScope.launch {
+                            viewModel.recipeViewModel.likeRecipe(event.id, session.value?.id ?: -1)
+                        }
+                    }
                 }
             }
         )

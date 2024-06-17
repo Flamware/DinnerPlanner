@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
             DinnerPlannerTheme {
                 val navController = rememberNavController()
                 var currentScreen by remember { mutableStateOf<BottomNavItem>(BottomNavItem.Home) }
-
                 // Observe userId LiveData
                 val userId by viewModel.authViewModel.currentUser.observeAsState()
                 val isLoggedIn = userId != null
@@ -47,10 +46,10 @@ class MainActivity : ComponentActivity() {
 
                 val items = if (isLoggedIn) {
                     println("User is logged in")
-                    listOf(BottomNavItem.Home, BottomNavItem.UserList,BottomNavItem.Planning, BottomNavItem.Profile)
+                    listOf(BottomNavItem.Home, BottomNavItem.Search,BottomNavItem.Planning, BottomNavItem.Profile)
                 } else {
                     println("User is not logged in")
-                    listOf(BottomNavItem.Login, BottomNavItem.UserList, BottomNavItem.Home)
+                    listOf(BottomNavItem.Login, BottomNavItem.Search, BottomNavItem.Home)
                 }
 
                 Scaffold(

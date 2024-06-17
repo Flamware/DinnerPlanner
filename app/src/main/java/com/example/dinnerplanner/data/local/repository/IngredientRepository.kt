@@ -5,9 +5,7 @@ import com.example.dinnerplanner.data.local.database.entity.Ingredient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class IngredientRepository(private val ingredientDao: IngredientDao) {
 
@@ -48,5 +46,9 @@ class IngredientRepository(private val ingredientDao: IngredientDao) {
 
     fun getIngredientsForRecipe(recipeId: Long): Flow<List<Ingredient>> {
         return ingredientDao.getIngredientsForRecipe(recipeId)
+    }
+
+    fun ingredientsByRecipeId(recipeId: Long?): Flow<List<Ingredient>> {
+        return ingredientDao.ingredientsByRecipeId(recipeId)
     }
 }

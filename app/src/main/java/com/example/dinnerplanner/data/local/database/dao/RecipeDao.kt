@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recipe: Recipe): Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -26,4 +25,8 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE userId = :userId")
     fun getAllRecipesByUserId(userId: Int): Flow<List<Recipe>>
 
+    @Query("SELECT * FROM recipes WHERE title LIKE '%' || :search || '%'")
+    fun searchRecipes(search: String): Flow<List<Recipe>>
+    @Query("SELECT * FROM recipes WHERE id = :recipeId")
+    fun recipeById(recipeId: Long?): Recipe
 }

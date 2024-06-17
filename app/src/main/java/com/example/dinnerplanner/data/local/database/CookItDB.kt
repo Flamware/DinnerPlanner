@@ -5,18 +5,23 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.dinnerplanner.data.local.database.dao.IngredientDao
+import com.example.dinnerplanner.data.local.database.dao.LikeDao
+import com.example.dinnerplanner.data.local.database.dao.PlanDao
 import com.example.dinnerplanner.data.local.database.entity.Recipe
 import com.example.dinnerplanner.data.local.database.entity.User
 import com.example.dinnerplanner.data.local.database.dao.RecipeDao
 import com.example.dinnerplanner.data.local.database.dao.UserDao
 import com.example.dinnerplanner.data.local.database.entity.Ingredient
+import com.example.dinnerplanner.data.local.database.entity.Like
+import com.example.dinnerplanner.data.local.database.entity.Plan
 
-@Database(entities = [Recipe::class, User::class,Ingredient::class], version = 1, exportSchema = false)
+@Database(entities = [Recipe::class, User::class,Ingredient::class, Like::class, Plan::class], version = 1, exportSchema = false)
 abstract class CookItDB: RoomDatabase() {
     abstract val recipeDao: RecipeDao
     abstract val userDao: UserDao
     abstract val ingredientDao: IngredientDao
-
+    abstract val likeDao: LikeDao
+    abstract val planDao: PlanDao
     companion object {
         @Volatile
         private var INSTANCE: CookItDB? = null

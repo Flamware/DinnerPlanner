@@ -1,3 +1,5 @@
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material3.Text
@@ -17,6 +19,12 @@ fun ProfileScreen(navController: NavController, viewModel: DinnerPlannerViewMode
 
     val currentUser by viewModel.authViewModel.currentUser.observeAsState()
 
+    // Create a launcher for the GetContent contract
+    val getContent = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+        // Handle the returned URI
+        println("Selected image URI: $uri")
+    }
+
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -29,9 +37,11 @@ fun ProfileScreen(navController: NavController, viewModel: DinnerPlannerViewMode
                 Text(text = "Username: ${user.username}", style = MaterialTheme.typography.body1)
                 Spacer(modifier = Modifier.height(8.dp))
                 Spacer(modifier = Modifier.height(8.dp))
-                // Add other user profile information as needed
             }
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+            Button(onClick = { getContent.launch("image/*") }) {
+                Text("Import Photo")
+            }
             Button(onClick = {
                 // Handle logout
                 authViewModel.logout()
