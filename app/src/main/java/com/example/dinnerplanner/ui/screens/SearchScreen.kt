@@ -128,7 +128,7 @@ fun RecipeList(recipe: Recipe, onRecipeClick: (Recipe) -> Unit) {
 
 @Composable
 fun SearchRecipe(navController: NavController, viewModel: DinnerPlannerViewModel, onRecipeSelected: (Recipe) -> Unit) {
-    val recipes by viewModel.recipeViewModel.recipes.collectAsState(initial = emptyList())
+    val recipes by viewModel.recipeViewModel.recipesFlow.collectAsState(initial = emptyList())
     Column(
         modifier = Modifier.fillMaxSize()
     ) {

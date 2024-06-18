@@ -1,5 +1,6 @@
 package com.example.dinnerplanner.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,12 +22,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dinnerplanner.RecipeEvent
 import com.example.dinnerplanner.data.local.database.entity.Ingredient
 import com.example.dinnerplanner.data.local.database.entity.Recipe
 import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.compose.material.Button
+import androidx.compose.ui.graphics.asImageBitmap
+
+fun ByteArray.toBitmap(): Bitmap {
+    return BitmapFactory.decodeByteArray(this, 0, this.size)
+}
 
 @Composable
 fun RecipeItem(
@@ -51,10 +59,21 @@ fun RecipeItem(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = recipe.title, fontSize = 20.sp, modifier = Modifier.padding(bottom = 8.dp))
+            val imageBitmap = recipe.img?.toBitmap()?.asImageBitmap()
+
+            if (imageBitmap != null) {
+                Image(
+                    bitmap = imageBitmap,
+                    contentDescription = "Recipe image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
             for (ingredient in ingredients) {
                 Text(text = "${ingredient.name} - ${ingredient.quantity}", fontSize = 14.sp)
             }
             Text(text = recipe.instructions, fontSize = 14.sp)
+            Text(text = "Type: ${recipe.mealType}", fontSize = 14.sp)
             Text(text = "Created by ${recipe.author}", fontSize = 14.sp)
 
             // Render like button with filled or unfilled heart icon based on isLiked state
@@ -73,6 +92,17 @@ fun RecipeItem(
                         imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "Like"
                     )
+                }
+            }
+
+            // Render delete button if the recipe belongs to the logged-in user
+            if (currentUser != null && recipe.author == currentUser.username) {
+                Button(onClick = {
+                    coroutineScope.launch {
+                        viewModel.recipeViewModel.deleteRecipe(recipe)
+                    }
+                }) {
+                    Text("Delete Recipe")
                 }
             }
         }

@@ -23,6 +23,7 @@ import com.example.dinnerplanner.ui.navigation.NavGraph
 import com.example.dinnerplanner.ui.theme.DinnerPlannerTheme
 
 class MainActivity : ComponentActivity() {
+
     private lateinit var viewModel: DinnerPlannerViewModel
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -46,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
                 val items = if (isLoggedIn) {
                     println("User is logged in")
-                    listOf(BottomNavItem.Home, BottomNavItem.Search,BottomNavItem.Planning, BottomNavItem.Profile)
+                    listOf(BottomNavItem.Home, BottomNavItem.Search,BottomNavItem.Planning,BottomNavItem.Shop, BottomNavItem.Profile)
                 } else {
                     println("User is not logged in")
                     listOf(BottomNavItem.Login, BottomNavItem.Search, BottomNavItem.Home)

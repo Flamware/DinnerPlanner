@@ -25,5 +25,6 @@ data class Recipe(
     val title: String,
     val instructions: String,
     val author: String,
-    val mealType: String // Store the MealType as a String
+    val mealType: String,
+    val img: ByteArray?
 )

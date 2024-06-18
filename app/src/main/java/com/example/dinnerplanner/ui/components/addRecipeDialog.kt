@@ -1,12 +1,16 @@
 package com.example.dinnerplanner.ui.components
 
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.dinnerplanner.RecipeEvent
 import com.example.dinnerplanner.RecipeState
@@ -27,6 +31,19 @@ fun AddRecipeDialog(
     // Function to handle adding an empty ingredient
     fun addIngredient() {
         ingredients = ingredients + Ingredient(name = "", quantity = "0", recipeId = -1)
+    }
+    fun uriToByteArray(context: Context, uri: Uri): ByteArray? {
+        return context.contentResolver.openInputStream(uri)?.buffered()?.use { it.readBytes() }
+    }
+    val context = LocalContext.current
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            val byteArray = uriToByteArray(context, uri)
+            if (byteArray != null) {
+                onEvent(RecipeEvent.SetImage(byteArray)) // Save the image ByteArray to RecipeState
+            }
+        }
     }
 
     AlertDialog(
@@ -54,6 +71,9 @@ fun AddRecipeDialog(
         },
         text = {
             Column(modifier = Modifier.padding(8.dp)) {
+                Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+                    Text("Add Image")
+                }
                 Box {
                     TextButton(onClick = { expanded = true }) {
                         Text(mealType)
@@ -118,14 +138,5 @@ fun AddRecipeDialog(
                 )
             }
         }
-    )
-}
-
-@Preview
-@Composable
-fun AddRecipeDialogPreview() {
-    AddRecipeDialog(
-        state = RecipeState(),
-        onEvent = { }
     )
 }

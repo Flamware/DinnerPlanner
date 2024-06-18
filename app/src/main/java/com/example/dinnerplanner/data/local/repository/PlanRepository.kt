@@ -24,4 +24,16 @@ class PlanRepository(private val planDao: PlanDao) {
         return planDao.getPlansForDay(selectedDay, userId)
     }
 
+    suspend fun deletePlan(plan: Plan) {
+        planDao.deletePlan(plan.id)
+    }
+
+    suspend fun deletePlanAthourAndDay(selectedDay: String, selectedHour: String, userId: Int) {
+        planDao.deletePlanAthourAndDay(selectedDay, selectedHour, userId)
+    }
+
+    fun getAllPlansByUserId(id: Int): Flow<List<Plan>> {
+        return planDao.getAllPlansByUserId(id)
+    }
+
 }

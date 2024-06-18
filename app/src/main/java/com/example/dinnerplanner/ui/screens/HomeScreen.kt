@@ -5,7 +5,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -15,9 +14,6 @@ import com.example.dinnerplanner.ui.components.AddRecipeDialog
 import com.example.dinnerplanner.ui.components.RecipeList
 import com.example.dinnerplanner.RecipeEvent
 import com.example.dinnerplanner.RecipeState
-import com.example.dinnerplanner.ui.navigation.BottomNavItem
-import com.example.dinnerplanner.ui.navigation.BottomNavigationBar
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -28,7 +24,7 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
     // State for managing the input fields in the dialog
     var recipeState by remember { mutableStateOf(RecipeState()) }
 
-    val recipesFlow = viewModel.recipeViewModel.recipes
+    val recipesFlow = viewModel.recipeViewModel.recipesFlow
 
     val session = viewModel.authViewModel.currentUser.observeAsState()
 
@@ -67,7 +63,7 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
                     is RecipeEvent.SetRecipeName -> recipeState = recipeState.copy(recipeName = event.recipeName)
                     is RecipeEvent.SetIngredients -> recipeState = recipeState.copy(ingredients = event.ingredients)
                     is RecipeEvent.SetInstructions -> recipeState = recipeState.copy(instructions = event.instructions)
-
+                    is RecipeEvent.SetImage -> recipeState = recipeState.copy(img = event.image)
                     is RecipeEvent.SaveRecipe -> {
                         println("Saving recipe: $recipeState")
                         viewModel.viewModelScope.launch {
@@ -76,7 +72,8 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
                                 title = recipeState.recipeName,
                                 instructions = recipeState.instructions,
                                 author = session.value?.username ?: "",
-                                mealType = recipeState.mealType
+                                mealType = recipeState.mealType,
+                                img = recipeState.img
                             )
                             val recipeId = viewModel.recipeViewModel.insert(recipe)
                             println("Inserted recipe with id: $recipeId")

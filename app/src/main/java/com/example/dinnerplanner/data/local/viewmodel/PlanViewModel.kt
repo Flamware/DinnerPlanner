@@ -31,4 +31,20 @@ class PlanViewModel (private val repository: PlanRepository) : ViewModel() {
         }
     }
 
+    fun deletePlan(plan: Plan) {
+        viewModelScope.launch {
+            repository.deletePlan(plan)
+        }
+    }
+
+    fun deletePlanAthourAndDay(selectedDay: String, selectedHour: String, userId: Int) {
+        viewModelScope.launch {
+            repository.deletePlanAthourAndDay(selectedDay, selectedHour, userId)
+        }
+    }
+
+    fun getAllPlansByUserId(id: Int): Flow<List<Plan>> {
+        return repository.getAllPlansByUserId(id)
+    }
+
 }

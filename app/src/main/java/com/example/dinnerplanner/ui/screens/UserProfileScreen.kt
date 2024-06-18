@@ -19,7 +19,7 @@ fun UserProfileScreen(userId: Int, viewModel: DinnerPlannerViewModel, navControl
     // Fetch the user's data from the ViewModel
     val userState by viewModel.authViewModel.getUserById(userId).collectAsState(initial = null)
     val recipesFlow = viewModel.recipeViewModel.getAllRecipesByUserId(userId)
-    val recipeState by viewModel.recipeViewModel.recipes.collectAsState(initial = null)
+    val recipeState by viewModel.recipeViewModel.recipesFlow.collectAsState(initial = emptyList())
 
     println("Loading recipes for user with id: $userId")
     println("recipesFlow: $recipesFlow")

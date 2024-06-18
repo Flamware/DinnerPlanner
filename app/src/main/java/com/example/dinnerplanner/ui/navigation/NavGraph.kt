@@ -2,8 +2,13 @@ package com.example.dinnerplanner.ui.navigation
 
 import PlanningScreen
 import ProfileScreen
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,14 +29,25 @@ fun NavGraph(navController: NavHostController, viewModel: DinnerPlannerViewModel
         }
         composable("recipe/{recipeId}") { backStackEntry ->
             val recipeId = backStackEntry.arguments?.getString("recipeId")?.toLongOrNull()
-            var recipe: Recipe? = null
-            var ingredients: Flow<List<Ingredient>>? = null
 
-            if (recipeId != null) {
-                LaunchedEffect(recipeId) {
-                    recipe = viewModel.recipeViewModel.recipeById(recipeId)
-                    ingredients = viewModel.ingredientViewModel.ingredientsByRecipeId(recipeId)
-                }
+            if (recipeId == null) {
+                navController.navigate(BottomNavItem.Home.route)
+                return@composable
+            }
+
+            var recipe by remember { mutableStateOf<Recipe?>(null) }
+            var ingredients by remember { mutableStateOf<Flow<List<Ingredient>>?>(null) }
+            var isLoading by remember { mutableStateOf(true) }
+
+            LaunchedEffect(recipeId) {
+                recipe = viewModel.recipeViewModel.recipeById(recipeId)
+                ingredients = viewModel.ingredientViewModel.ingredientsByRecipeId(recipeId)
+                isLoading = false
+            }
+
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
                 if (recipe != null && ingredients != null) {
                     RecipeItem(
                         recipe = recipe!!,
@@ -39,12 +55,9 @@ fun NavGraph(navController: NavHostController, viewModel: DinnerPlannerViewModel
                         viewModel = viewModel
                     )
                 } else {
-                    // Handle error, for example navigate back to home
+                    println("Recipe not found")
                     navController.navigate(BottomNavItem.Home.route)
                 }
-            } else {
-                // Handle error, for example navigate back to home
-                navController.navigate(BottomNavItem.Home.route)
             }
         }
 
@@ -66,7 +79,10 @@ fun NavGraph(navController: NavHostController, viewModel: DinnerPlannerViewModel
         }
 
         composable(BottomNavItem.Planning.route) {
-            PlanningScreen(viewModel = viewModel)
+            PlanningScreen(viewModel = viewModel, navController = navController)
+        }
+        composable(BottomNavItem.Shop.route) {
+            ShopScreen(viewModel = viewModel)
         }
     }
 }

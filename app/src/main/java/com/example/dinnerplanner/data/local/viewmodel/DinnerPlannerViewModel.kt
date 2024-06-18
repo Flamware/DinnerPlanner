@@ -8,17 +8,22 @@ import com.example.dinnerplanner.data.local.database.dao.RecipeDao
 import com.example.dinnerplanner.data.local.repository.IngredientRepository
 import com.example.dinnerplanner.data.local.repository.PlanRepository
 import com.example.dinnerplanner.data.local.repository.RecipeRepository
+import com.example.dinnerplanner.data.local.repository.ShoppingRepository
 import com.example.dinnerplanner.ui.viewmodel.RecipeViewModel
+import com.example.dinnerplanner.ui.viewmodel.ShopViewModel
 
 class DinnerPlannerViewModel(
     application: Application,
     userRepository: UserRepository,
     recipeRepository: RecipeRepository,
     ingredientRepository: IngredientRepository,
-    planRepository: PlanRepository)
+    planRepository: PlanRepository,
+    shopRepository: ShoppingRepository
+)
     : AndroidViewModel(application) {
     val authViewModel = AuthViewModel(userRepository)
     val recipeViewModel = RecipeViewModel(recipeRepository)
     val ingredientViewModel = IngredientViewModel(ingredientRepository)
     val planViewModel = PlanViewModel(planRepository)
+    val shoppingListViewModel = ShopViewModel(shopRepository)
 }

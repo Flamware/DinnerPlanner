@@ -4,9 +4,7 @@ import com.example.dinnerplanner.data.local.database.dao.LikeDao
 import com.example.dinnerplanner.data.local.database.dao.RecipeDao
 import com.example.dinnerplanner.data.local.database.entity.Like
 import com.example.dinnerplanner.data.local.database.entity.Recipe
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 
 
 class RecipeRepository(private val recipeDao: RecipeDao, private val likeDao: LikeDao) {
@@ -32,8 +30,9 @@ class RecipeRepository(private val recipeDao: RecipeDao, private val likeDao: Li
         return recipeDao.searchRecipes(search)
     }
 
-    suspend fun recipeById(id: Long?): Recipe? = withContext(Dispatchers.IO) {
-        recipeDao.recipeById(id)
+    suspend fun recipeById(recipeId: Long?): Recipe? {
+        println("recipeById: $recipeId")
+        return recipeDao.recipeById(recipeId)
     }
     fun getLikes(): Flow<List<Like>> = likeDao.getLikes()
 
@@ -47,6 +46,12 @@ class RecipeRepository(private val recipeDao: RecipeDao, private val likeDao: Li
 
     suspend fun isLiked(id: Long, i: Int): Any {
         return likeDao.isLiked(id, i)
+    }
+
+    fun getRecipesByIds(recipeIds: List<Long>): List<Recipe> {
+        return recipeIds.flatMap { recipeId ->
+            listOfNotNull(recipeDao.getRecipeById(recipeId))
+        }
     }
 
 

@@ -28,5 +28,9 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE title LIKE '%' || :search || '%'")
     fun searchRecipes(search: String): Flow<List<Recipe>>
     @Query("SELECT * FROM recipes WHERE id = :recipeId")
-    fun recipeById(recipeId: Long?): Recipe
+    suspend fun recipeById(recipeId: Long?): Recipe?
+    @Query("SELECT * FROM recipes WHERE id IN (:recipeIds)")
+    fun getRecipesByIds(recipeIds: List<Long>): List<Recipe>
+    @Query("SELECT * FROM recipes WHERE id = :recipeId")
+    fun getRecipeById(recipeId: Long): Recipe?
 }

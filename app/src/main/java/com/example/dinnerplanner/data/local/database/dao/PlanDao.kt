@@ -17,8 +17,9 @@ interface PlanDao {
     @Query("SELECT * FROM plans")
     fun getAllPlans(): Flow<List<Plan>>
 
-    @Query("DELETE FROM plans WHERE id = :planId")
-    suspend fun deletePlan(planId: Long)
+    @Query("DELETE FROM plans WHERE id = :id")
+    suspend fun deletePlan(id: Long)
+
     @Query("SELECT * FROM plans WHERE dayOfWeek = :dayOfWeek AND hourOfDay = :hourOfDay AND userId = :userId LIMIT 1")
     suspend fun getPlan(dayOfWeek: String, hourOfDay: String, userId: Int): Plan?
 
@@ -27,5 +28,11 @@ interface PlanDao {
 
     @Query("SELECT * FROM plans WHERE dayOfWeek = :selectedDay AND userId = :userId")
     fun getPlansForDay(selectedDay: String, userId: Int): Flow<List<Plan>>
+
+    @Query("DELETE FROM plans WHERE dayOfWeek = :selectedDay AND hourOfDay = :selectedHour AND userId = :userId")
+    suspend fun deletePlanAthourAndDay(selectedDay: String, selectedHour: String, userId: Int)
+
+    @Query("SELECT * FROM plans WHERE userId = :id")
+    fun getAllPlansByUserId(id: Int): Flow<List<Plan>>
 }
 

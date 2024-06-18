@@ -51,4 +51,9 @@ class IngredientRepository(private val ingredientDao: IngredientDao) {
     fun ingredientsByRecipeId(recipeId: Long?): Flow<List<Ingredient>> {
         return ingredientDao.ingredientsByRecipeId(recipeId)
     }
+
+
+    fun getIngredientsByRecipeId(recipeId: Long): Flow<List<Ingredient>> {
+        return ingredientDao.getIngredientsByRecipeId(recipeId)
+    }
 }

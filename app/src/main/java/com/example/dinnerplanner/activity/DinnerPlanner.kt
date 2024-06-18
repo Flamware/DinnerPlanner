@@ -5,6 +5,7 @@ import com.example.dinnerplanner.data.local.database.CookItDB
 import com.example.dinnerplanner.data.local.repository.IngredientRepository
 import com.example.dinnerplanner.data.local.repository.PlanRepository
 import com.example.dinnerplanner.data.local.repository.RecipeRepository
+import com.example.dinnerplanner.data.local.repository.ShoppingRepository
 import com.example.dinnerplanner.data.local.repository.UserRepository
 import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
 import dagger.hilt.android.HiltAndroidApp
@@ -20,13 +21,14 @@ class DinnerPlanner : Application() {
         val ingredientDao = CookItDB.getDatabase(this).ingredientDao
         val likeDao = CookItDB.getDatabase(this).likeDao
         val planDao = CookItDB.getDatabase(this).planDao
+        val shopDao = CookItDB.getDatabase(this).shopDao
 
         val userRepository = UserRepository(userDao)
         val recipeRepository = RecipeRepository(recipeDao, likeDao)
         val ingredientRepository = IngredientRepository(ingredientDao)
         val planRepository = PlanRepository(planDao)
-
-        viewModel = DinnerPlannerViewModel(this, userRepository, recipeRepository, ingredientRepository, planRepository)
+        val shopRepository = ShoppingRepository(shopDao)
+        viewModel = DinnerPlannerViewModel(this, userRepository, recipeRepository, ingredientRepository, planRepository, shopRepository)
     }
 
     fun isDatabaseInitialized(): Boolean {

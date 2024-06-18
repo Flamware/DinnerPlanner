@@ -33,4 +33,11 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
     fun ingredientsByRecipeId(recipeId: Long?): Flow<List<Ingredient>> {
         return repository.ingredientsByRecipeId(recipeId)
     }
+
+
+
+    fun getIngredientsByRecipeId(recipeId: Long): Flow<List<Ingredient>> {
+        return repository.getIngredientsByRecipeId(recipeId)
+    }
+
 }

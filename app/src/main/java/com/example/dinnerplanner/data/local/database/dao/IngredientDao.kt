@@ -30,4 +30,8 @@ interface IngredientDao {
 
     @Query("SELECT * FROM ingredients WHERE recipeId = :recipeId")
     fun ingredientsByRecipeId(recipeId: Long?): Flow<List<Ingredient>>
+
+    @Query("SELECT * FROM ingredients WHERE recipeId = :recipeId")
+    fun getIngredientsByRecipeId(recipeId: Long): Flow<List<Ingredient>>
+
 }
