@@ -54,5 +54,13 @@ class RecipeRepository(private val recipeDao: RecipeDao, private val likeDao: Li
         }
     }
 
+    fun getRecipeById(recipeId: Long): Recipe? {
+        return recipeDao.getRecipeById(recipeId)
+    }
+
+    fun getRecipeByIdFlow(recipeId: Long): Flow<Recipe?> {
+        return recipeDao.getRecipeByIdFlow(recipeId)
+    }
+
 
 }

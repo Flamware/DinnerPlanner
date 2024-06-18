@@ -33,4 +33,8 @@ interface RecipeDao {
     fun getRecipesByIds(recipeIds: List<Long>): List<Recipe>
     @Query("SELECT * FROM recipes WHERE id = :recipeId")
     fun getRecipeById(recipeId: Long): Recipe?
+
+    @Query("SELECT * FROM recipes WHERE id = :recipeId")
+     fun getRecipeByIdFlow(recipeId: Long): Flow<Recipe?>
+
 }

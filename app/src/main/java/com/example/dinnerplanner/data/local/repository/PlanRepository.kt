@@ -1,8 +1,11 @@
 package com.example.dinnerplanner.data.local.repository
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.dinnerplanner.data.local.database.dao.PlanDao
 import com.example.dinnerplanner.data.local.database.entity.Plan
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 class PlanRepository(private val planDao: PlanDao) {
     fun getAllPlans() = planDao.getAllPlans()
@@ -34,6 +37,11 @@ class PlanRepository(private val planDao: PlanDao) {
 
     fun getAllPlansByUserId(id: Int): Flow<List<Plan>> {
         return planDao.getAllPlansByUserId(id)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getPlansByDate(userId: Int, date: LocalDate): Flow<List<Plan>> {
+        return planDao.getPlansByDate(userId, date.toString())
     }
 
 }

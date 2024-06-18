@@ -7,6 +7,7 @@ import com.example.dinnerplanner.data.local.database.entity.Recipe
 import com.example.dinnerplanner.data.local.repository.PlanRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 
 class PlanViewModel (private val repository: PlanRepository) : ViewModel() {
@@ -45,6 +46,10 @@ class PlanViewModel (private val repository: PlanRepository) : ViewModel() {
 
     fun getAllPlansByUserId(id: Int): Flow<List<Plan>> {
         return repository.getAllPlansByUserId(id)
+    }
+
+    fun getPlansByDate(userId: Int, date: LocalDate): Flow<List<Plan>> {
+        return repository.getPlansByDate(userId, date)
     }
 
 }

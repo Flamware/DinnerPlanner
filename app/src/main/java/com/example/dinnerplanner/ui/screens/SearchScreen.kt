@@ -6,18 +6,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,44 +33,57 @@ import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
 import com.example.dinnerplanner.ui.components.RecipeList
 import com.example.dinnerplanner.ui.components.RecipeSearch
 import com.example.dinnerplanner.ui.components.UserSearch
-
 @Composable
 fun SearchScreen(navController: NavController, viewModel: DinnerPlannerViewModel) {
-    val searchType = remember { mutableStateOf("") }
-    if (searchType.value == "user") {
-        SearchUser(navController = navController, viewModel = viewModel)
-    } else {
-        SearchRecipe(navController = navController, viewModel = viewModel) { recipe ->
-            navController.navigate("recipe/${recipe.id}")
-        }
-    }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+    var searchType by remember { mutableStateOf(SearchType.RECIPE) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
-                Modifier
-                    .padding(8.dp)
-            ) {
+            SearchType.values().forEach { type ->
                 Button(
-                    onClick = { searchType.value = "recipe"},
-                    modifier = Modifier.padding(8.dp) // Add margin to the button
+                    onClick = { searchType = type },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = if (searchType == type) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+                    )
                 ) {
-                    Text("Search Recipe")
-                }
-                Button(
-                    onClick = { searchType.value = "user" },
-                    modifier = Modifier.padding(8.dp) // Add margin to the button
-                ) {
-                    Text("Search User")
+                    Text(type.label)
                 }
             }
+        }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            when (searchType) {
+                SearchType.RECIPE -> RecipeSearch(viewModel = viewModel, navController = navController)
+                SearchType.USER -> SearchUser( navController = navController, viewModel = viewModel)
+            }
         }
     }
 }
+
+enum class SearchType(val label: String) {
+    RECIPE("Search Recipe"),
+    USER("Search User")
+}
+
 @Composable
 fun UserListItem(user: User, navController: NavController) {
     Button(
@@ -93,15 +109,18 @@ fun SearchUser(navController: NavController, viewModel: DinnerPlannerViewModel) 
         modifier = Modifier.fillMaxSize()
     ) {
         UserSearch(viewModel = viewModel.authViewModel, navController = navController)
-        Box(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier
+            .weight(1f)) {
             LazyColumn(
-                modifier = Modifier.padding(16.dp)  // Add padding around LazyColumn
+                modifier = Modifier
+                    .padding(16.dp)  // Add padding around LazyColumn
             ) {
 
                 // Use items() to display each user
                 items(users) { user ->
                     UserListItem(user = user, navController = navController)
-                    Spacer(modifier = Modifier.height(8.dp)) // Add space between buttons
+                    Spacer(modifier = Modifier
+                        .height(8.dp)) // Add space between buttons
                 }
             }
         }

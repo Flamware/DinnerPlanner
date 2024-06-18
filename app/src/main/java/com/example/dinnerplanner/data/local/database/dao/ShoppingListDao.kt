@@ -34,4 +34,6 @@ interface ShoppingListDao {
     @Query("SELECT * FROM shopping_list WHERE recipeId = :recipeId AND ingredientId = :ingredientId AND userId = :userId LIMIT 1")
     fun getShoppingItem(recipeId: Long, ingredientId: Long, userId: Int): Flow<ShoppingListItem>
 
+    @Query("SELECT * FROM shopping_list WHERE userId = :userId")
+    fun getAllShoppingListItemsByUserId(userId: Int): Flow<List<ShoppingListItem>>
 }

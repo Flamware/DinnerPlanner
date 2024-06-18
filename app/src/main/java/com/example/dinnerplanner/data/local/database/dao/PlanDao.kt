@@ -34,5 +34,8 @@ interface PlanDao {
 
     @Query("SELECT * FROM plans WHERE userId = :id")
     fun getAllPlansByUserId(id: Int): Flow<List<Plan>>
+
+    @Query("SELECT * FROM plans WHERE userId = :userId AND dayOfWeek = :date")
+    fun getPlansByDate(userId: Int, date: String): Flow<List<Plan>>
 }
 

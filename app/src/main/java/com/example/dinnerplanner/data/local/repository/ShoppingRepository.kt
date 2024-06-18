@@ -49,4 +49,8 @@ class ShoppingRepository(private val shoppingListDao: ShoppingListDao) {
         return shoppingListDao.getShoppingItem(recipeId, ingredientId, userId).firstOrNull()
     }
 
+    fun getAllShoppingListItemsByUserId(userId: Int): Flow<List<ShoppingListItem>> {
+        return shoppingListDao.getAllShoppingListItemsByUserId(userId)
+    }
+
 }

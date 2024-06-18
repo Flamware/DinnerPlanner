@@ -57,4 +57,8 @@ class ShopViewModel(private val repository: ShoppingRepository) : ViewModel() {
     fun getShoppingListByRecipeIdAndIngredientId(recipeId: Long, ingredientId: Long, userId: Int): Flow<ShoppingListItem?> {
         return repository.getShoppingListByRecipeIdAndIngredientId(recipeId, ingredientId, userId)
     }
+
+    fun getAllShoppingListItemsByUserId(userId: Int): Flow<List<ShoppingListItem>> {
+        return repository.getAllShoppingListItemsByUserId(userId)
+    }
 }

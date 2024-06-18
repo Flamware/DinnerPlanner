@@ -9,6 +9,7 @@ import com.example.dinnerplanner.data.local.database.entity.Recipe
 import com.example.dinnerplanner.data.local.database.entity.ShoppingListItem
 import com.example.dinnerplanner.data.local.repository.RecipeRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -80,6 +81,14 @@ class RecipeViewModel(private val repository: RecipeRepository) : ViewModel() {
                 _recipesLiveData.value = recipes
             }
         }
+    }
+
+    fun getRecipeById(recipeId: Long): Flow<Recipe?> {
+        return repository.getRecipeByIdFlow(recipeId)
+    }
+
+    fun getRecipeByIdFlow(recipeId: Long): Flow<Recipe?> {
+        return repository.getRecipeByIdFlow(recipeId)
     }
 }
 
