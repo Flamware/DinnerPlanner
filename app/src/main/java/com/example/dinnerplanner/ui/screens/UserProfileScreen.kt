@@ -29,12 +29,6 @@ fun UserProfileScreen(userId: Int, viewModel: DinnerPlannerViewModel, navControl
     // Display the user's data
     if (user != null) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Button(onClick = { navController.navigate("search_recipe") }) {
-                Text("Search Recipe")
-            }
-            Button(onClick = { navController.navigate("search_user") }) {
-                Text("Search User")
-            }
             Text(text = "Profile de : ${user.username}", fontSize = 20.sp)
             RecipeList(recipes = recipesFlow, viewModel = viewModel)
         }
