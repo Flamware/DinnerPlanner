@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.example.dinnerplanner.Fond
 import com.example.dinnerplanner.data.local.database.entity.Recipe
 import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
 import com.example.dinnerplanner.ui.components.AddRecipeDialog
@@ -33,6 +34,7 @@ fun HomeScreen(viewModel: DinnerPlannerViewModel, navController: NavController) 
     ) {
         // Use Modifier.weight(1f) to make LazyColumn take the available space
         Box(modifier = Modifier.weight(1f)) {
+            Fond()
             RecipeList(recipes = recipesFlow, viewModel = viewModel)
         }
 

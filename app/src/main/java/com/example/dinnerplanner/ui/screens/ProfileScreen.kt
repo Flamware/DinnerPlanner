@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.dinnerplanner.Fond
 import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
 import com.example.dinnerplanner.data.local.database.entity.User
 
@@ -17,6 +18,7 @@ fun ProfileScreen(navController: NavController, viewModel: DinnerPlannerViewMode
 
     val currentUser by viewModel.authViewModel.currentUser.observeAsState()
 
+    Fond()
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

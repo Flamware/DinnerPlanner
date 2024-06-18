@@ -31,6 +31,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.material.Button
 import androidx.compose.ui.graphics.asImageBitmap
+import com.example.dinnerplanner.Fond
 
 fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
@@ -51,7 +52,6 @@ fun RecipeItem(
         // Check if the recipe is liked by the current user
         isLiked = viewModel.recipeViewModel.isRecipeLiked(recipe.id, currentUser?.id ?: -1) as Boolean
     }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()

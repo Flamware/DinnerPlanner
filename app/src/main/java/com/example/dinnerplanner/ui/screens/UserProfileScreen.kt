@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.sp
 import com.example.dinnerplanner.data.local.viewmodel.DinnerPlannerViewModel
 import com.example.dinnerplanner.ui.components.RecipeList
 import androidx.navigation.NavController
+import com.example.dinnerplanner.Fond
 
 @Composable
 fun UserProfileScreen(userId: Int, viewModel: DinnerPlannerViewModel, navController: NavController) {
@@ -26,6 +27,7 @@ fun UserProfileScreen(userId: Int, viewModel: DinnerPlannerViewModel, navControl
     // Create a local copy of user
     val user = userState
 
+    Fond()
     // Display the user's data
     if (user != null) {
         Column(modifier = Modifier.padding(16.dp)) {

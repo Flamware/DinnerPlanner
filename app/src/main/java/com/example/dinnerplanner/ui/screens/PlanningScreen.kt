@@ -25,7 +25,10 @@ import com.example.dinnerplanner.ui.screens.SearchRecipe
 import kotlinx.coroutines.launch
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import com.example.dinnerplanner.Fond
+
 fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
@@ -45,6 +48,7 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
 
     var hourToRecipeMap by remember { mutableStateOf<Map<String, Recipe?>>(emptyMap()) }
 
+
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(
             topBar = {
@@ -54,6 +58,7 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
                 )
             }
         ) { innerPadding ->
+            Fond()
             Box(modifier = Modifier.padding(innerPadding)) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(text = "Select a Day", style = MaterialTheme.typography.h5)
@@ -78,7 +83,8 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
                                     },
                                 textAlign = TextAlign.Center
                             )
-                            Divider(color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f))
+                            Divider(color = Color.Black)
+                                //color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f))
                             Spacer(modifier = Modifier.height(8.dp))
                             hourToRecipeMap[hour]?.let { recipe ->
                                 Column(

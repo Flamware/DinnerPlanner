@@ -3,6 +3,7 @@ package com.example.dinnerplanner.ui.screens
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 import toBitmap
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import com.example.dinnerplanner.Fond
 import com.example.dinnerplanner.data.local.database.entity.Plan
 import com.example.dinnerplanner.data.local.database.entity.Recipe
 import java.time.LocalDate
@@ -83,6 +85,7 @@ fun ShopScreen(viewModel: DinnerPlannerViewModel) {
             }
         },
         content = { innerPadding ->
+            Fond()
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -96,6 +99,7 @@ fun ShopScreen(viewModel: DinnerPlannerViewModel) {
                                 .fillMaxWidth()
                                 .padding(16.dp)
                                 .border(1.dp, Color.Gray, MaterialTheme.shapes.medium)
+                                .background(color = Color.White)
                         ) {
                             Text(
                                 text = "Day: ${plan.dayOfWeek} at ${plan.hourOfDay}",
