@@ -26,12 +26,9 @@ import kotlinx.coroutines.launch
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.asImageBitmap
-import kotlinx.coroutines.delay
-
 fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
-
 @Composable
 fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavController) {
     val daysOfWeek = listOf("Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche")
@@ -39,12 +36,13 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
     val hoursOfDay = (0..23 step 2).map { "$it:00" }
     var selectedHour by remember { mutableStateOf<String?>(null) }
     var selectedRecipe by remember { mutableStateOf<Recipe?>(null) }
-    var newPlanAdded by remember { mutableStateOf(false) }
 
     val planViewModel = viewModel.planViewModel
     val context = LocalContext.current
 
+    // State to hold the plans for the selected day and hour
     var plans by remember { mutableStateOf<List<Plan>>(emptyList()) }
+
     var hourToRecipeMap by remember { mutableStateOf<Map<String, Recipe?>>(emptyMap()) }
 
     Surface(color = MaterialTheme.colors.background) {
@@ -61,7 +59,7 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
                     Text(text = "Select a Day", style = MaterialTheme.typography.h5)
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    LazyRow {
+                    LazyRow() {
                         items(daysOfWeek) { day ->
                             DayItem(day = day, isSelected = day == selectedDay) {
                                 selectedDay = it
@@ -70,62 +68,61 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
                     }
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(hoursOfDay) { hour ->
-                            Column {
-                                Text(
-                                    text = hour,
-                                    style = MaterialTheme.typography.body1,
+                            Text(
+                                text = hour,
+                                style = MaterialTheme.typography.body1,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        selectedHour = hour
+                                    },
+                                textAlign = TextAlign.Center
+                            )
+                            Divider(color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f))
+                            Spacer(modifier = Modifier.height(8.dp))
+                            hourToRecipeMap[hour]?.let { recipe ->
+                                Column(
                                     modifier = Modifier
+                                        .clickable { navController.navigate("recipe/${recipe.id}") }
                                         .fillMaxWidth()
-                                        .clickable {
-                                            selectedHour = hour
-                                        },
-                                    textAlign = TextAlign.Center
-                                )
-                                Divider(color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f))
-                                Spacer(modifier = Modifier.height(8.dp))
-                                hourToRecipeMap[hour]?.let { recipe ->
-                                    Column(
-                                        modifier = Modifier
-                                            .clickable { navController.navigate("recipe/${recipe.id}") }
-                                            .fillMaxWidth()
-                                    ) {
-                                        Text(text = recipe.mealType)
-                                        Text(
-                                            text = recipe.title,
-                                            style = MaterialTheme.typography.body1
+                                ) {
+                                    Text(text = recipe.mealType)
+                                    Text(
+                                        text = recipe.title,
+                                        style = MaterialTheme.typography.body1
+                                    )
+                                    if (recipe.img != null) {
+                                        val imageBitmap = recipe.img.toBitmap().asImageBitmap()
+                                        Image(
+                                            bitmap = imageBitmap,
+                                            contentDescription = "Recipe image",
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(200.dp)
                                         )
-                                        if (recipe.img != null) {
-                                            val imageBitmap = recipe.img.toBitmap().asImageBitmap()
-                                            Image(
-                                                bitmap = imageBitmap,
-                                                contentDescription = "Recipe image",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(200.dp)
-                                            )
-                                            Spacer(modifier = Modifier.height(8.dp))
-                                        } else {
-                                            val mealTypeImage = when (recipe.mealType) {
-                                                "BREAKFAST" -> R.drawable.default_breakfast
-                                                "LUNCH" -> R.drawable.default_launch
-                                                "DINNER" -> R.drawable.default_dinner
-                                                "OTHER" -> R.drawable.default_snack
-                                                else -> R.drawable.default_launch
-                                            }
-                                            Image(
-                                                painter = painterResource(id = mealTypeImage),
-                                                contentDescription = "Meal type image",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(200.dp)
-                                            )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                    } else {
+                                        val mealTypeImage = when (recipe.mealType) {
+                                            "BREAKFAST" -> R.drawable.default_breakfast
+                                            "LUNCH" -> R.drawable.default_launch
+                                            "DINNER" -> R.drawable.default_dinner
+                                            "OTHER" -> R.drawable.default_snack
+                                            else -> R.drawable.default_launch // Replace with your default image
                                         }
+                                        Image(
+                                            painter = painterResource(id = mealTypeImage),
+                                            contentDescription = "Meal type image",
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(200.dp)
+                                        )
                                     }
-                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
+                                Spacer(modifier = Modifier.height(8.dp))
                             }
                         }
                     }
+
                 }
             }
         }
@@ -141,7 +138,6 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
                             navController = navController,
                             viewModel = viewModel
                         ) { recipe ->
-                            println("Before adding plan, selectedDay: $selectedDay")
                             viewModel.viewModelScope.launch {
                                 val userId = viewModel.authViewModel.currentUser.value?.id
                                 if (userId != null) {
@@ -153,11 +149,9 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
                                             userId = userId
                                         )
                                     )
-                                    println("After adding plan, selectedDay: $selectedDay")
-                                    newPlanAdded = true
                                     selectedHour = null
                                 } else {
-// Handle the case where currentUser.value is null
+                                    // Handle the case where currentUser.value is null
                                     SnackbarHostState().showSnackbar(message = "User ID not available")
                                 }
                             }
@@ -176,14 +170,25 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
                         viewModel.viewModelScope.launch {
                             val userId = viewModel.authViewModel.currentUser.value?.id
                             if (userId != null) {
-                                planViewModel.deletePlanAthourAndDay(
-                                    selectedDay,
-                                    selectedHour!!,
-                                    userId
-                                )
-                                newPlanAdded = true
+                                planViewModel.deletePlanAthourAndDay(selectedDay, selectedHour!!, userId)
                                 selectedHour = null
+                                selectedRecipe = null
+
+                                // Refresh plans
+                                planViewModel.getPlansForDay(selectedDay, userId).collect { fetchedPlans ->
+                                    plans = fetchedPlans
+
+                                    // Clear the hourToRecipeMap and fill it with the updated plans
+                                    hourToRecipeMap = emptyMap()
+                                    fetchedPlans.forEach { plan ->
+                                        val fetchedRecipe = viewModel.recipeViewModel.recipeById(plan.recipeId)
+                                        fetchedRecipe?.let { recipe ->
+                                            hourToRecipeMap = hourToRecipeMap + (plan.hourOfDay to recipe)
+                                        }
+                                    }
+                                }
                             } else {
+                                // Handle the case where currentUser.value is null
                                 SnackbarHostState().showSnackbar(message = "User ID not available")
                             }
                         }
@@ -194,37 +199,25 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
             )
         }
     }
-    LaunchedEffect(selectedDay, newPlanAdded) {
+
+    LaunchedEffect(selectedDay) {
         viewModel.viewModelScope.launch {
-            // Add a delay to ensure that the selectedDay variable is updated before the block is executed
-            delay(100)
-
-            // Clear the hourToRecipeMap
-            hourToRecipeMap = emptyMap()
-
             // Fetch all plans for the selected day
             println("Fetching plans for $selectedDay")
 
-            planViewModel.getPlansForDay(
-                selectedDay,
-                viewModel.authViewModel.currentUser.value?.id!!
-            ).collect { fetchedPlans ->
+            planViewModel.getPlansForDay(selectedDay, viewModel.authViewModel.currentUser.value?.id!!).collect { fetchedPlans ->
                 println("Fetched plans: $fetchedPlans")
                 plans = fetchedPlans
 
                 // Map each plan to its hour and recipe
-                val newHourToRecipeMap = mutableMapOf<String, Recipe?>()
                 fetchedPlans.forEach { plan ->
                     val fetchedRecipe = viewModel.recipeViewModel.recipeById(plan.recipeId)
                     fetchedRecipe?.let { recipe ->
-                        newHourToRecipeMap[plan.hourOfDay] = recipe
+                        hourToRecipeMap = hourToRecipeMap + (plan.hourOfDay to recipe)
                     }
                 }
-                hourToRecipeMap = newHourToRecipeMap
                 println("Plans: $plans")
             }
         }
-        // Set newPlanAdded to false after the plans have been fetched
-        newPlanAdded = false
     }
 }
