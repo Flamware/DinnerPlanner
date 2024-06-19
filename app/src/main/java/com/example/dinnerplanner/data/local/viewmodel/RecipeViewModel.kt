@@ -10,6 +10,7 @@ import com.example.dinnerplanner.data.local.database.entity.ShoppingListItem
 import com.example.dinnerplanner.data.local.repository.RecipeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -18,8 +19,8 @@ import kotlinx.coroutines.withContext
 
 class RecipeViewModel(private val repository: RecipeRepository) : ViewModel() {
 
-    private val _searchResults = MutableLiveData<List<Recipe>>()
-    val searchResults: LiveData<List<Recipe>> = _searchResults
+    private val _searchResults = MutableStateFlow<List<Recipe>>(emptyList())
+    val searchResults: StateFlow<List<Recipe>> = _searchResults
 
     private val _recipesLiveData = MutableLiveData<List<Recipe>>()
     val recipesLiveData: LiveData<List<Recipe>> = _recipesLiveData
@@ -27,9 +28,9 @@ class RecipeViewModel(private val repository: RecipeRepository) : ViewModel() {
     private val _SelectedRecipe = MutableLiveData<Recipe?>()
     val SelectedRecipe: MutableLiveData<Recipe?> = _SelectedRecipe
 
+    // StateFlow to observe recipes
     val recipesFlow: StateFlow<List<Recipe>> = repository.getRecipesOrderedByRecipeName()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
     private fun printRecipes() = viewModelScope.launch {
         recipesFlow.collect { recipeList: List<Recipe> ->
             recipeList.forEach { recipe ->
@@ -58,8 +59,10 @@ class RecipeViewModel(private val repository: RecipeRepository) : ViewModel() {
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     }
     fun searchRecipes(newText: String) {
-        repository.searchRecipes(newText).asLiveData().observeForever {
-            _searchResults.value = it
+        viewModelScope.launch {
+            repository.searchRecipes(newText).collect { recipes ->
+                _searchResults.value = recipes
+            }
         }
     }
     suspend fun recipeById(recipeId: Long?): Recipe? {

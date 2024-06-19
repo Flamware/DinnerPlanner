@@ -74,7 +74,9 @@ fun SearchScreen(navController: NavController, viewModel: DinnerPlannerViewModel
                 .fillMaxWidth()
         ) {
             when (searchType) {
-                SearchType.RECIPE -> RecipeSearch(viewModel = viewModel, navController = navController)
+                SearchType.RECIPE -> RecipeSearch(viewModel = viewModel, navController = navController, onRecipeClick = { recipe ->
+                    navController.navigate("recipe/${recipe.id}")
+                })
                 SearchType.USER -> SearchUser( navController = navController, viewModel = viewModel)
             }
         }
@@ -153,7 +155,7 @@ fun SearchRecipe(navController: NavController, viewModel: DinnerPlannerViewModel
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        RecipeSearch(viewModel = viewModel, navController = navController)
+        RecipeSearch(viewModel = viewModel, navController = navController, onRecipeClick = onRecipeSelected)
         Box(modifier = Modifier.weight(1f)) {
             LazyColumn(
                 modifier = Modifier.padding(16.dp)  // Add padding around LazyColumn

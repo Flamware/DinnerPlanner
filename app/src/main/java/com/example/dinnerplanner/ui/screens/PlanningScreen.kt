@@ -142,7 +142,8 @@ fun PlanningScreen(viewModel: DinnerPlannerViewModel, navController: NavControll
                         Text("Select a recipe to add to the plan")
                         SearchRecipe(
                             navController = navController,
-                            viewModel = viewModel
+                            viewModel = viewModel,
+
                         ) { recipe ->
                             viewModel.viewModelScope.launch {
                                 val userId = viewModel.authViewModel.currentUser.value?.id
