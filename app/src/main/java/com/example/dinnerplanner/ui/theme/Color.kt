@@ -9,4 +9,4 @@ val Teal200 = Color(0xFF03DAC5)
 
 val Orange500 = Color(0xffff7a3d)
 val Orange700 = Color(0xFFffd624)
-val Blue200 = Color(0xff113aef)
+val Blue200 = Color(0xFF2196F3)

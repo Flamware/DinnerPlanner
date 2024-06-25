@@ -163,7 +163,7 @@ fun ShopScreen(viewModel: DinnerPlannerViewModel) {
                                                 }
                                             }
                                         },
-                                        colors = ButtonDefaults.buttonColors(backgroundColor = if (isInBasket) Color.Red else Color.Green)
+                                        colors = ButtonDefaults.buttonColors(backgroundColor = if (isInBasket) MaterialTheme.colors.secondary else MaterialTheme.colors.primary)
                                     ) {
                                         Text(if (isInBasket) "Remove from Basket" else "Add to Basket")
                                     }

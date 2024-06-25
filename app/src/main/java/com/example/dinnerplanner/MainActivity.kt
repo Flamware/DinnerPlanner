@@ -93,13 +93,4 @@ fun DefaultPreview() {
 }
 
 @Composable
-fun Fond(modifier: Modifier = Modifier){
-
-        Image(painter = painterResource(id = R.drawable.fond)
-            , contentDescription = " background",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
-        )
-
-
-}
+fun Fond(modifier: Modifier = Modifier){}
